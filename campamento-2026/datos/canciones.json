@@ -1,0 +1,88 @@
+[
+  {
+    "id": "derrama",
+    "titulo": "Derrama",
+    "numero": 1,
+    "lema": true,
+    "bloques": [
+      {
+        "tipo": "estrofa",
+        "lineas": [
+          "Eres poderoso",
+          "No lo puedo explicar",
+          "Si invoco tu nombre",
+          "Lo extraordinario pasará",
+          "Tu ser me estremece",
+          "Y tengo que adorar",
+          "Anhelo tu espíritu"
+        ]
+      },
+      {
+        "tipo": "estrofa",
+        "lineas": [
+          "Tú eres mi todo",
+          "No lo puedo negar",
+          "No busco emociones",
+          "Quiero algo real",
+          "Tan solo un toque",
+          "Me puede transformar",
+          "Necesito tu aceite Dios"
+        ]
+      },
+      {
+        "tipo": "coro",
+        "lineas": [
+          "Soy una vasija esperando ser llena",
+          "Un alma sedienta de tu presencia",
+          "Derrama tu gloria oh Dios",
+          "Rindo mi corazón"
+        ]
+      },
+      {
+        "tipo": "estrofa",
+        "lineas": ["Yo te quiero sentir"]
+      }
+    ]
+  },
+  {
+    "id": "derrama-tu-poder",
+    "titulo": "Derrama tu poder",
+    "numero": 2,
+    "lema": true,
+    "bloques": [
+      {
+        "tipo": "estrofa",
+        "lineas": [
+          "Muéveme como nunca me has movido",
+          "Para que no me olvide de ti,",
+          "Guíame por este momento lindo",
+          "Que no me quiero desviar,",
+          "No te quiero perder."
+        ]
+      },
+      {
+        "tipo": "coro",
+        "lineas": [
+          "Derrama tu poder, derrama tu amor,",
+          "Jesucristo sólo quiero más de ti."
+        ]
+      },
+      {
+        "tipo": "estrofa",
+        "lineas": [
+          "Tómame de la mano este día",
+          "Para que sepa yo que soy de ti;",
+          "Hoy te doy lo que queda de mi vida,",
+          "Porque eres mi galardón y mi inspiración."
+        ]
+      },
+      {
+        "tipo": "coro",
+        "lineas": [
+          "Es mi oración, mi única súplica:",
+          "Estar junto a ti, estar junto a ti."
+        ]
+      }
+    ]
+  }
+]

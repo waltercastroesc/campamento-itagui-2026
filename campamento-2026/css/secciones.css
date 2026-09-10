@@ -293,3 +293,175 @@
     grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
   }
 }
+
+/* ---------- Canciones ---------- */
+
+.buscador {
+  display: block;
+  width: min(100%, 32rem);
+  margin: 0 auto var(--esp-4);
+}
+
+.buscador__campo {
+  width: 100%;
+  font: inherit;
+  color: var(--vino);
+  background: var(--hueso);
+  border: 0.125rem solid var(--crema);
+  border-radius: var(--radio-pill);
+  padding: var(--esp-3) var(--esp-4);
+}
+
+.canciones__vacio {
+  text-align: center;
+  opacity: 0.85;
+}
+
+.libro {
+  display: grid;
+  gap: var(--esp-4);
+}
+
+.cancion {
+  background: var(--hueso);
+  color: var(--vino);
+  border-radius: var(--radio-tarjeta);
+  padding: var(--esp-4);
+  box-shadow: var(--sombra-tarjeta);
+}
+
+.cancion__cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  margin-bottom: var(--esp-3);
+}
+
+.cancion__titulo {
+  font-size: var(--txt-titular);
+}
+
+.cancion__insignia {
+  font-weight: 700;
+  font-size: var(--txt-menor);
+  background: var(--vino);
+  color: var(--crema);
+  border-radius: var(--radio-pill);
+  padding: 0.125rem var(--esp-2);
+}
+
+.letra-bloque {
+  margin-bottom: var(--esp-3);
+  line-height: 1.7;
+}
+
+/* El coro se distingue de las estrofas con una barra y cursiva. */
+.letra-bloque--coro {
+  font-style: italic;
+  font-weight: 500;
+  border-left: 0.1875rem solid var(--vino);
+  padding-left: var(--esp-3);
+}
+
+.cancion__cantar {
+  padding: var(--esp-2) var(--esp-4);
+  background: var(--vino);
+  color: var(--crema);
+}
+
+/* Modo pantalla completa */
+.cantar {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--vino);
+  color: var(--crema);
+  display: flex;
+  flex-direction: column;
+}
+
+.cantar__barra {
+  display: flex;
+  gap: var(--esp-2);
+  padding: var(--esp-3);
+  justify-content: flex-end;
+  border-bottom: 0.0625rem solid rgba(254, 249, 221, 0.25);
+}
+
+.cantar__boton {
+  min-width: 3rem;
+  min-height: 3rem;
+  border: 0.125rem solid var(--crema);
+  background: transparent;
+  color: var(--crema);
+  border-radius: var(--radio-pill);
+  font-weight: 600;
+}
+
+.cantar__cerrar {
+  margin-left: auto;
+}
+
+.cantar__cuerpo {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--esp-4);
+  -webkit-overflow-scrolling: touch;
+}
+
+.cantar__titulo {
+  font-size: var(--txt-seccion);
+  margin-bottom: var(--esp-4);
+  text-align: center;
+}
+
+.cantar__letra {
+  max-width: 40rem;
+  margin-inline: auto;
+  line-height: 1.8;
+}
+
+.cantar__letra .letra-bloque--coro {
+  border-left-color: var(--crema);
+}
+
+@media (min-width: 48rem) {
+  /* Marco de libreta abierta: dos paginas y las anillas al centro.
+     En celular no aplica: alli es una sola pagina, como pide el diseño. */
+  .libro {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: var(--esp-6);
+    position: relative;
+    background: var(--hueso);
+    border-radius: var(--radio-tarjeta);
+    padding: var(--esp-5) var(--esp-4);
+  }
+
+  .libro::before {
+    content: "";
+    position: absolute;
+    top: var(--esp-4);
+    bottom: var(--esp-4);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1.25rem;
+    /* Las anillas: un circulo vino repetido a lo largo del lomo. */
+    background-image: radial-gradient(
+      circle at 50% 0.625rem,
+      var(--vino) 0 0.375rem,
+      transparent 0.375rem
+    );
+    background-size: 100% 2.25rem;
+    background-repeat: repeat-y;
+    border-left: 0.0625rem solid rgba(85, 11, 24, 0.25);
+    border-right: 0.0625rem solid rgba(85, 11, 24, 0.25);
+  }
+
+  /* Dentro de la libreta las canciones son paginas, no tarjetas sueltas. */
+  .cancion {
+    background: transparent;
+    box-shadow: none;
+    padding-inline: 0;
+  }
+}
