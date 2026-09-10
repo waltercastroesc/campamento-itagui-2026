@@ -3,7 +3,7 @@
 // Es el unico archivo del proyecto que conoce a todos los modulos.
 
 const secciones = [
-  // ["#portada", () => import("./carta.js")],
+  ["#portada", () => import("./carta.js")],
   // ["#habitaciones", () => import("./habitaciones.js")],
   // ["#programacion", () => import("./programacion.js")],
   // ["#canciones", () => import("./canciones.js")],

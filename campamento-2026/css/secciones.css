@@ -1,1 +1,125 @@
 /* secciones.css — estilos propios de cada bloque, en el orden de la pagina. */
+
+/* ---------- Portada y carta ---------- */
+
+.portada {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-block: var(--esp-5);
+}
+
+.portada__lema {
+  font-size: var(--txt-portada);
+  color: var(--crema);
+  text-transform: uppercase;
+  display: grid;
+  gap: 0.1em;
+}
+
+.portada__marca {
+  font-family: var(--fuente-texto);
+  font-weight: 500;
+  letter-spacing: 0.5em;
+  /* Compensa el espaciado de la ultima letra para que quede centrado. */
+  text-indent: 0.5em;
+  font-size: var(--txt-titular);
+  margin-block: var(--esp-4);
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  width: min(100%, 26rem);
+}
+
+.portada__marca::before,
+.portada__marca::after {
+  content: "";
+  flex: 1;
+  height: 0.0625rem;
+  background: var(--crema);
+}
+
+.portada__pill {
+  margin-top: var(--esp-4);
+}
+
+.sobre {
+  width: min(100%, 32rem);
+  margin-top: var(--esp-4);
+}
+
+.sobre__tapa {
+  width: 100%;
+  border: 0.125rem solid var(--crema);
+  background: transparent;
+  color: var(--crema);
+  border-radius: var(--radio-tarjeta);
+  padding: var(--esp-4);
+  display: grid;
+  gap: var(--esp-2);
+  justify-items: center;
+  transition: transform 0.4s ease, background-color 0.4s ease;
+}
+
+.sobre__sello {
+  display: grid;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  background: var(--crema);
+  color: var(--vino);
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.sobre__rotulo {
+  font-family: var(--fuente-titulo);
+  font-size: var(--txt-titular);
+}
+
+.sobre--abierto .sobre__tapa {
+  transform: translateY(-0.5rem);
+  background: rgba(254, 249, 221, 0.08);
+}
+
+.sobre__hoja {
+  background: var(--hueso);
+  color: var(--vino);
+  border-radius: var(--radio-tarjeta);
+  padding: var(--esp-4);
+  margin-top: var(--esp-3);
+  text-align: left;
+}
+
+.sobre__titulo {
+  font-size: var(--txt-titular);
+  margin-bottom: var(--esp-3);
+}
+
+.sobre__firma {
+  font-weight: 600;
+  text-align: right;
+  margin-bottom: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sobre--abierto .sobre__hoja {
+    animation: salir-carta 0.5s ease both;
+  }
+
+  @keyframes salir-carta {
+    from {
+      opacity: 0;
+      transform: translateY(-1.5rem) scaleY(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
