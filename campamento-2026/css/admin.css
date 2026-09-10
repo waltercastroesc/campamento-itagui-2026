@@ -1,0 +1,124 @@
+/* admin.css — panel de administracion. Reutiliza los tokens del sitio publico. */
+
+body.admin {
+  background: var(--hueso);
+  color: var(--vino);
+  min-height: 100vh;
+}
+
+.admin-contenedor {
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: var(--esp-4) var(--esp-3);
+}
+
+.admin-titulo {
+  text-align: center;
+  margin-bottom: var(--esp-4);
+}
+
+.admin-clave {
+  display: grid;
+  gap: var(--esp-3);
+  max-width: 24rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.admin-clave input {
+  font: inherit;
+  padding: var(--esp-2) var(--esp-3);
+  border: 0.125rem solid var(--vino);
+  border-radius: var(--radio-pill);
+  text-align: center;
+}
+
+.admin-seccion {
+  border-top: 0.125rem solid rgba(85, 11, 24, 0.15);
+  padding-block: var(--esp-4);
+}
+
+.panel-lista {
+  display: grid;
+  gap: var(--esp-3);
+  margin-bottom: var(--esp-3);
+}
+
+.panel-tarjeta {
+  background: var(--crema);
+  border-radius: var(--radio-tarjeta);
+  padding: var(--esp-3);
+  display: grid;
+  gap: var(--esp-2);
+}
+
+.panel-fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  align-items: center;
+}
+
+.panel-fila input {
+  flex: 1;
+  /* Sin esto, el ancho intrinseco del texto empuja la fila mas alla del
+     ancho disponible en vez de encogerse — el mismo defecto que ya se
+     corrigio en la barra de navegacion del sitio publico. */
+  min-width: 8rem;
+  font: inherit;
+  padding: var(--esp-2);
+  border: 0.0625rem solid rgba(85, 11, 24, 0.3);
+  border-radius: 0.5rem;
+}
+
+.panel-tarjeta > input {
+  font: inherit;
+  padding: var(--esp-2);
+  border: 0.0625rem solid rgba(85, 11, 24, 0.3);
+  border-radius: 0.5rem;
+}
+
+.panel-quitar {
+  border: none;
+  background: transparent;
+  color: var(--vino);
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: var(--esp-1);
+}
+
+.panel-quitar-habitacion {
+  border: 0.0625rem solid var(--vino);
+  background: transparent;
+  color: var(--vino);
+  border-radius: var(--radio-pill);
+  padding: var(--esp-1) var(--esp-3);
+  justify-self: start;
+}
+
+.panel-bloque-letra {
+  display: grid;
+  gap: var(--esp-2);
+  padding: var(--esp-2);
+  border: 0.0625rem solid rgba(85, 11, 24, 0.2);
+  border-radius: 0.5rem;
+}
+
+.panel-bloque-letra textarea {
+  font: inherit;
+  padding: var(--esp-2);
+  border: 0.0625rem solid rgba(85, 11, 24, 0.3);
+  border-radius: 0.5rem;
+  resize: vertical;
+}
+
+.panel-guardar {
+  background: var(--vino);
+  color: var(--crema);
+}
+
+.panel-estado {
+  text-align: center;
+  font-weight: 600;
+  min-height: 1.5em;
+}

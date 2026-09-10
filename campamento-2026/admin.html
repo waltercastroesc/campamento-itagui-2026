@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Panel de administración — Campamento 2026</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin">
+  <div class="admin-contenedor">
+    <h1 class="admin-titulo">Panel de administración</h1>
+
+    <div id="admin-clave">
+      <form id="admin-clave-formulario" class="admin-clave">
+        <label for="admin-clave-campo">Contraseña del panel</label>
+        <input id="admin-clave-campo" type="password" autocomplete="off" required>
+        <button type="submit" class="pill">Entrar</button>
+        <p id="admin-clave-error" role="alert"></p>
+      </form>
+    </div>
+
+    <div id="admin-secciones" hidden></div>
+  </div>
+
+  <script type="module" src="js/admin/principal-admin.js"></script>
+</body>
+</html>
