@@ -19,12 +19,42 @@ function mensajeDe(error) {
   return MENSAJES[error?.message] || MENSAJES.fallo_servidor;
 }
 
+// Se usa el destino final de lh3.googleusercontent.com directamente, no
+// "drive.google.com/thumbnail?..." (que redirige ahi mismo): esa redireccion
+// no trae cabecera CORS y declara un Content-Type generico, lo que hace que
+// el navegador bloquee la imagen (ORB) incluso cuando el archivo es publico.
+// El destino final si responde con CORS y el tipo de imagen correcto.
 function urlMiniatura(id) {
-  return `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${CONFIG.anchoMiniatura}`;
+  return `https://lh3.googleusercontent.com/d/${encodeURIComponent(id)}=w${CONFIG.anchoMiniatura}`;
 }
 
 function urlGrande(id) {
-  return `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w1600`;
+  return `https://lh3.googleusercontent.com/d/${encodeURIComponent(id)}=w1600`;
+}
+
+/**
+ * Carga una imagen de Drive con reintentos. Drive no es un servidor de
+ * imagenes: cuando el carrusel pide muchas miniaturas casi al mismo tiempo,
+ * algunas fallan de forma pasajera. Un reintento con espera (con un pequeño
+ * cambio en la URL para no toparse con una respuesta fallida ya cacheada)
+ * suele resolverlo sin que la persona note nada.
+ */
+function cargarConReintento(imagen, url, intentosRestantes = 3) {
+  function intentar() {
+    const separador = url.includes("?") ? "&" : "?";
+    imagen.src = intentosRestantes < 3 ? `${url}${separador}_r=${Date.now()}` : url;
+  }
+
+  imagen.addEventListener(
+    "error",
+    () => {
+      if (intentosRestantes <= 1) return;
+      setTimeout(() => cargarConReintento(imagen, url, intentosRestantes - 1), 1500);
+    },
+    { once: true }
+  );
+
+  intentar();
 }
 
 /**
@@ -293,10 +323,10 @@ function construirMiniatura(foto, alAbrir) {
   boton.className = "carrusel__abrir";
 
   const imagen = document.createElement("img");
-  imagen.src = urlMiniatura(foto.id);
   imagen.loading = "lazy";
   imagen.decoding = "async";
   imagen.alt = foto.autor ? `Foto del campamento subida por ${foto.autor}` : "Foto del campamento";
+  cargarConReintento(imagen, urlMiniatura(foto.id));
 
   boton.append(imagen);
   boton.addEventListener("click", alAbrir);
@@ -323,8 +353,8 @@ function abrirVisor(fotos, indiceInicial) {
 
   function mostrar() {
     const foto = fotos[indice];
-    imagen.src = urlGrande(foto.id);
     imagen.alt = foto.autor ? `Foto del campamento subida por ${foto.autor}` : "Foto del campamento";
+    cargarConReintento(imagen, urlGrande(foto.id));
   }
 
   function mover(paso) {
