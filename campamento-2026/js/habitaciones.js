@@ -2,6 +2,8 @@
 // Celular: tarjetas plegadas, porque quince habitaciones abiertas son un scroll interminable.
 
 import { cargarJSON, montarSeccion } from "./util/datos.js";
+import { cargarConRespaldo, traerDatoVivo } from "./util/datosVivos.js";
+import { CONFIG } from "./config.js";
 
 /** Personas de una habitacion, contando al lider. Funcion pura. */
 export function contarIntegrantes(habitacion) {
@@ -11,14 +13,26 @@ export function contarIntegrantes(habitacion) {
 }
 
 export function iniciar(contenedor) {
-  return montarSeccion(
-    contenedor,
-    () => cargarJSON("datos/habitaciones.json"),
-    pintarHabitaciones
-  );
+  return montarSeccion(contenedor, cargarHabitaciones, pintarHabitaciones);
 }
 
-function pintarHabitaciones(contenedor, habitaciones) {
+/**
+ * Mientras no haya Apps Script configurado (desarrollo local), usa el JSON
+ * de ejemplo. Una vez configurado, lee en vivo con respaldo en el dispositivo.
+ */
+async function cargarHabitaciones() {
+  if (!CONFIG.urlAppsScript) {
+    const lista = await cargarJSON("datos/habitaciones.json");
+    return { lista, desdeCache: false };
+  }
+  const { datos: lista, desdeCache } = await cargarConRespaldo(
+    "campamento2026:habitaciones",
+    () => traerDatoVivo("habitaciones")
+  );
+  return { lista, desdeCache };
+}
+
+function pintarHabitaciones(contenedor, { lista: habitaciones, desdeCache }) {
   const envoltorio = document.createElement("div");
   envoltorio.className = "contenedor";
 
@@ -26,6 +40,13 @@ function pintarHabitaciones(contenedor, habitaciones) {
   titulo.className = "seccion__titulo";
   titulo.id = "titulo-habitaciones";
   titulo.textContent = "Conoce tu habitación";
+
+  if (desdeCache) {
+    const aviso = document.createElement("p");
+    aviso.className = "aviso-cache";
+    aviso.textContent = "Mostrando la última versión guardada en este dispositivo — puede no estar actualizada.";
+    envoltorio.append(aviso);
+  }
 
   const rejilla = document.createElement("div");
   rejilla.className = "habitaciones";

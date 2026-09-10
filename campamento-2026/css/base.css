@@ -151,3 +151,11 @@ a {
     padding-block: var(--esp-6);
   }
 }
+
+/* Aviso discreto cuando una seccion muestra una copia local, no el dato en vivo. */
+.aviso-cache {
+  text-align: center;
+  font-size: var(--txt-menor);
+  opacity: 0.75;
+  margin-bottom: var(--esp-3);
+}
