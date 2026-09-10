@@ -33,7 +33,7 @@ function construirMarcas() {
 
   const iglesia = document.createElement("img");
   iglesia.className = "pie__logo";
-  iglesia.src = "img/logo-iglesia.svg";
+  iglesia.src = "img/logo-iglesia.png";
   iglesia.alt = "Logo de la iglesia";
   // Si el logo definitivo aun no esta, no se deja un icono roto en pantalla.
   iglesia.addEventListener("error", () => iglesia.remove());
