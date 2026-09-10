@@ -13,6 +13,12 @@ import { conReintento } from "../js/util/red.js";
 import { enlaceTelefono } from "../js/pie.js";
 import { cargarConRespaldo, traerDatoVivo } from "../js/util/datosVivos.js";
 import { llamarApi, mensajeDeErrorAdmin } from "../js/admin/clave.js";
+import {
+  agregarHabitacion,
+  quitarHabitacion,
+  agregarIntegrante,
+  quitarIntegrante,
+} from "../js/admin/habitaciones-datos.js";
 
 /** Un almacen tipo localStorage, pero en memoria, para no depender del navegador. */
 function crearAlmacenFalso() {
@@ -445,6 +451,45 @@ export const casos = [
         "No pudimos guardar los cambios. Verifica tu conexión e inténtalo de nuevo.",
         "Un codigo desconocido deberia caer en el mensaje generico"
       );
+    },
+  },
+  {
+    nombre: "agregarHabitacion añade una habitacion vacia al final",
+    entorno: "ambos",
+    ejecutar() {
+      const resultado = agregarHabitacion([{ nombre: "Habitación 1", lider: "", integrantes: [] }]);
+      igual(resultado.length, 2, "Deberia haber dos habitaciones");
+      igual(resultado[1], { nombre: "", lider: "", integrantes: [] }, "La nueva deberia estar vacia");
+      igual(resultado[0].nombre, "Habitación 1", "La primera no deberia cambiar");
+    },
+  },
+  {
+    nombre: "quitarHabitacion elimina por indice sin mutar el arreglo original",
+    entorno: "ambos",
+    ejecutar() {
+      const original = [{ nombre: "A" }, { nombre: "B" }, { nombre: "C" }];
+      const resultado = quitarHabitacion(original, 1);
+      igual(resultado.map((h) => h.nombre), ["A", "C"], "Deberia quitar solo la del medio");
+      igual(original.length, 3, "El arreglo original no deberia mutarse");
+    },
+  },
+  {
+    nombre: "agregarIntegrante añade un nombre vacio a una habitacion",
+    entorno: "ambos",
+    ejecutar() {
+      const habitacion = { nombre: "H1", lider: "", integrantes: ["Ana"] };
+      const resultado = agregarIntegrante(habitacion);
+      igual(resultado.integrantes, ["Ana", ""], "Deberia agregar una entrada vacia al final");
+      igual(habitacion.integrantes, ["Ana"], "La habitacion original no deberia mutarse");
+    },
+  },
+  {
+    nombre: "quitarIntegrante elimina por indice",
+    entorno: "ambos",
+    ejecutar() {
+      const habitacion = { nombre: "H1", lider: "", integrantes: ["Ana", "Luis", "Sara"] };
+      const resultado = quitarIntegrante(habitacion, 0);
+      igual(resultado.integrantes, ["Luis", "Sara"], "Deberia quitar el primero");
     },
   },
 ];
