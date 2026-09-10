@@ -819,25 +819,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--esp-3);
 }
 
-.pie__logo {
-  max-height: 3.5rem;
-  width: auto;
-}
-
-.pie__separador {
-  width: 0.0625rem;
-  align-self: stretch;
-  background: currentColor;
-  opacity: 0.35;
-}
-
-.pie__leyenda {
-  margin: 0;
-  font-size: var(--txt-menor);
-  font-weight: 600;
+.pie__logo-marcas {
+  max-width: min(100%, 24rem);
+  height: auto;
 }
 
 .pie__enlaces {

@@ -4,12 +4,14 @@
 
 - [ ] `datos/carta.json` — texto real de la carta de bienvenida
 - [ ] `datos/habitaciones.json` — habitaciones reales con sus integrantes
+      (o cargarlas desde el panel de administración una vez publicado el Apps Script)
 - [ ] `datos/contactos.json` — enlace del grupo de WhatsApp
 - [ ] `datos/contactos.json` — nombres, roles y teléfonos de emergencia
-- [ ] `datos/locacion.json` — punto exacto de la finca en Google Maps y en Waze
 - [ ] `datos/canciones.json` — canciones adicionales del libro
-- [ ] `img/logo-iglesia.svg` y `img/logo-trasciende.svg`
-- [ ] `js/config.js` — URL `/exec` del Apps Script publicado
+      (o cargarlas desde el panel de administración)
+- [x] `datos/locacion.json` — punto exacto de la finca en Google Maps y en Waze
+- [x] `img/logo-pie.png` — logo de la iglesia + TRASCIENDE, recoloreado a vino
+- [x] `js/config.js` — URL `/exec` del Apps Script publicado
 - [ ] Confirmar con el liderazgo las dos actividades del sábado a las 8:00 PM
       («Cena» y «Noche de alabanza» aparecen a la misma hora en el boceto)
 

@@ -31,32 +31,16 @@ function construirMarcas() {
   const bloque = document.createElement("div");
   bloque.className = "pie__marcas";
 
-  const iglesia = document.createElement("img");
-  iglesia.className = "pie__logo";
-  iglesia.src = "img/logo-iglesia.png";
-  iglesia.alt = "Logo de la iglesia";
-  // Si el logo definitivo aun no esta, no se deja un icono roto en pantalla.
-  iglesia.addEventListener("error", () => iglesia.remove());
+  // Una sola imagen con todo: logo de la iglesia, separador, logo de
+  // TRASCIENDE y "Jóvenes Itagüí Central" — así la entregó el liderazgo.
+  const marcas = document.createElement("img");
+  marcas.className = "pie__logo-marcas";
+  marcas.src = "img/logo-pie.png";
+  marcas.alt = "Iglesia Pentecostal Unida de Colombia — TRASCIENDE, Jóvenes Itagüí Central";
+  // Si el archivo definitivo aun no esta, no se deja un icono roto en pantalla.
+  marcas.addEventListener("error", () => marcas.remove());
 
-  const separador = document.createElement("span");
-  separador.className = "pie__separador";
-  separador.setAttribute("aria-hidden", "true");
-
-  const trasciende = document.createElement("div");
-  trasciende.className = "pie__trasciende";
-
-  const logo = document.createElement("img");
-  logo.className = "pie__logo";
-  logo.src = "img/logo-trasciende.svg";
-  logo.alt = "Logo de TRASCIENDE";
-  logo.addEventListener("error", () => logo.remove());
-
-  const leyenda = document.createElement("p");
-  leyenda.className = "pie__leyenda";
-  leyenda.textContent = "Jóvenes Itagüí Central";
-
-  trasciende.append(logo, leyenda);
-  bloque.append(iglesia, separador, trasciende);
+  bloque.append(marcas);
   return bloque;
 }
 
