@@ -19,6 +19,7 @@ import {
   agregarIntegrante,
   quitarIntegrante,
 } from "../js/admin/habitaciones-datos.js";
+import { agregarBloque, quitarBloque } from "../js/admin/programacion-datos.js";
 
 /** Un almacen tipo localStorage, pero en memoria, para no depender del navegador. */
 function crearAlmacenFalso() {
@@ -490,6 +491,33 @@ export const casos = [
       const habitacion = { nombre: "H1", lider: "", integrantes: ["Ana", "Luis", "Sara"] };
       const resultado = quitarIntegrante(habitacion, 0);
       igual(resultado.integrantes, ["Luis", "Sara"], "Deberia quitar el primero");
+    },
+  },
+  {
+    nombre: "agregarBloque añade un bloque vacio al final del dia",
+    entorno: "ambos",
+    ejecutar() {
+      const dia = { dia: "Viernes", numero: 1, bloques: [{ hora: "5:00 PM", actividad: "Salida" }] };
+      const resultado = agregarBloque(dia);
+      igual(resultado.bloques.length, 2, "Deberia haber dos bloques");
+      igual(resultado.bloques[1], { hora: "", actividad: "" }, "El nuevo deberia estar vacio");
+      igual(dia.bloques.length, 1, "El dia original no deberia mutarse");
+    },
+  },
+  {
+    nombre: "quitarBloque elimina por indice",
+    entorno: "ambos",
+    ejecutar() {
+      const dia = {
+        dia: "Sábado",
+        numero: 2,
+        bloques: [
+          { hora: "6:00 AM", actividad: "Alborada" },
+          { hora: "8:00 AM", actividad: "Desayuno" },
+        ],
+      };
+      const resultado = quitarBloque(dia, 0);
+      igual(resultado.bloques, [{ hora: "8:00 AM", actividad: "Desayuno" }], "Deberia quedar solo el segundo");
     },
   },
 ];
