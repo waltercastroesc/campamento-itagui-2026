@@ -6,7 +6,7 @@ import { igual, cierto, lanza } from "./afirmar.js";
 import { cargarJSON } from "../js/util/datos.js";
 import { validarProgramacion } from "../js/programacion.js";
 import { contarIntegrantes } from "../js/habitaciones.js";
-import { normalizar } from "../js/util/texto.js";
+import { normalizar, aSlug } from "../js/util/texto.js";
 import { filtrarCanciones, textoDeCancion } from "../js/canciones.js";
 import { calcularMedidas, comprimir, validarArchivo, LADO_MAXIMO } from "../js/imagen.js";
 import { conReintento } from "../js/util/red.js";
@@ -376,6 +376,15 @@ export const casos = [
         "ok:false deberia lanzar"
       );
       igual(error.message, "fallo_servidor", "Deberia propagar el codigo de error del servidor");
+    },
+  },
+  {
+    nombre: "aSlug convierte un titulo en un identificador de una sola palabra",
+    entorno: "ambos",
+    ejecutar() {
+      igual(aSlug("Derrama tu poder"), "derrama-tu-poder", "Deberia usar guiones y minusculas");
+      igual(aSlug("¡Corazón Nuevo!"), "corazon-nuevo", "Deberia quitar acentos y signos");
+      igual(aSlug("  Espacios   raros  "), "espacios-raros", "Deberia colapsar espacios y recortar bordes");
     },
   },
 ];

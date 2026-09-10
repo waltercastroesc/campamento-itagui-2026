@@ -12,3 +12,10 @@ export function normalizar(texto) {
     .toLowerCase()
     .trim();
 }
+
+/** Identificador de una sola palabra a partir de un titulo: minusculas, sin acentos, con guiones. */
+export function aSlug(texto) {
+  return normalizar(texto)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
