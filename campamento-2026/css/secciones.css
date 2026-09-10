@@ -606,6 +606,27 @@
   transition: width 0.2s ease;
 }
 
+/* Sin porcentaje real disponible durante la subida (ver nota en galeria.js),
+   un pulso indeterminado en vez de una barra que no avanza. */
+.progreso__relleno--indeterminado {
+  width: 40%;
+  animation: pulso-indeterminado 1.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes pulso-indeterminado {
+    0% {
+      margin-left: 0%;
+    }
+    50% {
+      margin-left: 60%;
+    }
+    100% {
+      margin-left: 0%;
+    }
+  }
+}
+
 .progreso--listo .progreso__relleno {
   background: var(--crema);
 }

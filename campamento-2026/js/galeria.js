@@ -28,19 +28,20 @@ function urlGrande(id) {
 }
 
 /**
- * Sube una foto con XMLHttpRequest y no con fetch, porque fetch no informa
- * del progreso de subida y la especificacion pide una barra por foto.
- * El Content-Type text/plain mantiene la peticion "simple" y evita CORS previo.
+ * Sube una foto con XMLHttpRequest. El Content-Type text/plain mantiene la
+ * peticion "simple" para evitar la verificacion CORS previa — Apps Script no
+ * tiene forma de responder a esa verificacion, asi que dispararla rompe la
+ * subida por completo. Por eso NO se escucha "upload.progress": agregar ese
+ * oyente, aunque no cambie las cabeceras, hace que el navegador exija la
+ * verificacion previa igual, y con Apps Script eso significa que ninguna
+ * subida llega a completarse. El indicador de "Subiendo..." queda
+ * indeterminado (un pulso, no un porcentaje real) por esta misma razon.
  */
-function subirFoto(cuerpo, alProgreso) {
+function subirFoto(cuerpo) {
   return new Promise((entregar, rechazar) => {
     const peticion = new XMLHttpRequest();
     peticion.open("POST", CONFIG.urlAppsScript, true);
     peticion.setRequestHeader("Content-Type", "text/plain;charset=utf-8");
-
-    peticion.upload.addEventListener("progress", (evento) => {
-      if (evento.lengthComputable) alProgreso(evento.loaded / evento.total);
-    });
 
     peticion.addEventListener("load", () => {
       let datos;
@@ -166,18 +167,17 @@ async function procesarUna(archivo, autor) {
     const comprimida = await comprimir(archivo);
     const datos = await aBase64(comprimida);
     estado.textContent = "Subiendo…";
-    return subirFoto(
-      { accion: "subirFoto", nombre: archivo.name, mime: "image/jpeg", datos, autor },
-      (fraccion) => {
-        relleno.style.width = `${Math.round(fraccion * 100)}%`;
-      }
-    );
+    // Barra indeterminada (un pulso, no un porcentaje): no se puede medir el
+    // progreso real sin romper la subida (ver nota en subirFoto).
+    relleno.classList.add("progreso__relleno--indeterminado");
+    return subirFoto({ accion: "subirFoto", nombre: archivo.name, mime: "image/jpeg", datos, autor });
   };
 
   try {
     if (!CONFIG.urlAppsScript) throw new Error("sin_configurar");
     // Un reintento automatico con espera, como pide el manejo de errores.
     await conReintento(intentar, 2, 2000);
+    relleno.classList.remove("progreso__relleno--indeterminado");
     relleno.style.width = "100%";
     fila.classList.add("progreso--listo");
     estado.textContent = "¡Lista!";
