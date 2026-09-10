@@ -163,11 +163,5 @@ function construirEnlaces(contactos) {
   emergencia.append(cabecera, lista);
   bloque.append(emergencia);
 
-  const admin = document.createElement("a");
-  admin.className = "pie__admin";
-  admin.href = "admin.html";
-  admin.textContent = "Panel de administración";
-  bloque.append(admin);
-
   return bloque;
 }

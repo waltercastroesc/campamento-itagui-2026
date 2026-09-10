@@ -790,6 +790,22 @@
   min-width: 0;
 }
 
+/* El acceso al panel no comparte el reparto equitativo de los otros
+   cuatro: se mantiene compacto y queda al extremo derecho de la barra. */
+/* Encadenada con .navegacion__lista para ganarle en especificidad a
+   ".navegacion__lista li" — si no, ese "flex: 1" general se impone y
+   "Admin" queda apretado en el mismo reparto que los otros cuatro. */
+.navegacion__lista .navegacion__item-admin {
+  flex: 0 0 auto;
+  min-width: auto;
+  margin-left: auto;
+}
+
+.navegacion__enlace-admin {
+  padding-inline: var(--esp-3);
+  opacity: 0.7;
+}
+
 /* ---------- Pie ---------- */
 
 .pie {
@@ -898,15 +914,6 @@
 
 /* Discreto a proposito: solo quien lo busca lo encuentra facil; la
    contraseña sigue siendo la unica proteccion real para editar. */
-.pie__admin {
-  display: block;
-  text-align: center;
-  margin-top: var(--esp-3);
-  font-size: var(--txt-menor);
-  opacity: 0.6;
-  text-decoration: underline;
-}
-
 @media (min-width: 48rem) {
   .navegacion {
     top: 0;
