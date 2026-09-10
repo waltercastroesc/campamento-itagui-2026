@@ -1,0 +1,82 @@
+# Lista de verificación antes del campamento
+
+## Contenido que falta poner
+
+- [ ] `datos/carta.json` — texto real de la carta de bienvenida
+- [ ] `datos/habitaciones.json` — habitaciones reales con sus integrantes
+- [ ] `datos/contactos.json` — enlace del grupo de WhatsApp
+- [ ] `datos/contactos.json` — nombres, roles y teléfonos de emergencia
+- [ ] `datos/locacion.json` — punto exacto de la finca en Google Maps y en Waze
+- [ ] `datos/canciones.json` — canciones adicionales del libro
+- [ ] `img/logo-iglesia.svg` y `img/logo-trasciende.svg`
+- [ ] `js/config.js` — URL `/exec` del Apps Script publicado
+- [ ] Confirmar con el liderazgo las dos actividades del sábado a las 8:00 PM
+      («Cena» y «Noche de alabanza» aparecen a la misma hora en el boceto)
+
+## Antes de publicar
+
+- [ ] **Publicar `apps-script/Codigo.gs`** desde script.google.com, con la
+      cuenta de Gmail dueña de la carpeta de Drive (instrucciones dentro del
+      propio archivo). Esto no se pudo hacer en desarrollo: requiere iniciar
+      sesión en esa cuenta específica.
+- [ ] Con la URL ya publicada, comprobar `doPost` y `doGet` con una petición
+      real desde el navegador (pasos detallados en el encabezado de
+      `Codigo.gs` y en el plan de implementación, Tarea 10, pasos 4-6):
+      confirmar que no aparece ninguna petición `OPTIONS` en la pestaña Red
+      (verificaría que no se disparó la comprobación CORS previa) y que el
+      servidor rechaza un archivo que no sea imagen.
+- [ ] La cuenta de Gmail dueña de la carpeta de Drive tiene espacio libre
+- [ ] Esa cuenta no es el Drive personal de nadie
+- [ ] Las cuotas vigentes de Apps Script para cuentas personales están revisadas
+      en developers.google.com/apps-script/guides/services/quotas
+
+## Pruebas en dispositivos reales
+
+- [ ] Subir una foto desde Android con datos móviles
+- [ ] Subir una foto desde iPhone con datos móviles
+- [ ] Subir varias fotos a la vez
+- [ ] Revisar la página completa en la pantalla más pequeña disponible
+- [ ] Cortar la conexión a mitad de una subida y comprobar el mensaje
+- [ ] Verificar que la foto subida aparece en la carpeta de Drive
+- [ ] Borrar una foto desde Drive y confirmar que desaparece del carrusel
+- [ ] Comprobar los enlaces de WhatsApp, Maps, Waze y los `tel:`
+- [ ] Probar el modo pantalla completa de una canción con la pantalla en reposo
+
+## Ya verificado en desarrollo
+
+- Suite de pruebas: 24/24 en Node (`node pruebas/ejecutar-en-node.js`),
+  25/25 en el navegador (`pruebas.html`, incluida la compresión de imagen real).
+- Aislamiento: se probó renombrando cada uno de los seis `datos/*.json` por
+  turnos — la sección afectada muestra su aviso con «Reintentar» y las demás
+  cinco secciones siguen funcionando. El botón «Reintentar» recupera la
+  sección sin recargar la página.
+- Teclado y foco: el primer `Tab` en una carga limpia llega a «Saltar al
+  contenido»; los controles interactivos reciben foco visible
+  (`outline` sólido).
+- Pantalla de 320px de ancho: sin desbordamiento horizontal
+  (`scrollWidth` ≤ `innerWidth`). Se corrigió un defecto real encontrado
+  aquí: las etiquetas de una sola palabra de la barra fija («HABITACIÓN»)
+  se desbordaban de su celda y se pintaban sobre la vecina.
+- `prefers-reduced-motion: reduce`: las transiciones y el `scroll-behavior`
+  quedan anulados globalmente; el sitio sigue siendo usable.
+- Sin peticiones a terceros fuera de lo esperado: solo `google.com` /
+  `googleapis.com` (mapa embebido y miniaturas de Drive) y, cuando el Apps
+  Script esté configurado, `script.google.com`. Ninguna petición a
+  `fonts.googleapis.com` ni a ningún CDN.
+- Portada, programación (pestañas en celular / columnas en escritorio),
+  habitaciones (plegadas en celular / abiertas en escritorio), buscador de
+  canciones (por título, por letra, sin acentos), modo pantalla completa de
+  canciones (A−/A+, wakeLock, Escape), locación (mapa real diferido, Maps,
+  Waze, copiar dirección), y pie con contactos de emergencia (`tel:`):
+  verificados visualmente e interactivamente en navegador real.
+- Galería: aislamiento cuando la URL del Apps Script no está configurada,
+  rechazo de archivos que no son imagen sin gastar red, y compresión real
+  antes de subir. La subida contra Drive de verdad queda pendiente de que
+  se publique el Apps Script (ver arriba).
+
+## Durante el campamento
+
+- Para borrar una foto: elimínala de la carpeta de Drive. Desaparece del
+  carrusel en menos de un minuto.
+- Si alguien abusa del endpoint de subida: crea una implementación nueva del
+  Apps Script (URL distinta) y actualiza `js/config.js`. La URL anterior muere.
