@@ -916,6 +916,7 @@
    contraseña sigue siendo la unica proteccion real para editar. */
 @media (min-width: 48rem) {
   .navegacion {
+    position: relative;
     top: 0;
     bottom: auto;
     border-top: none;
@@ -929,6 +930,18 @@
 
   .navegacion__lista li {
     flex: 0 0 auto;
+  }
+
+  /* Sacado del flujo del flex: si compite por el espacio libre (aunque sea
+     con "margin-left: auto"), le quita a "justify-content: center" el
+     espacio que necesita para centrar los otros cuatro. Posicionado aparte,
+     ya no interfiere con ese centrado. */
+  .navegacion__lista .navegacion__item-admin {
+    position: absolute;
+    right: var(--esp-4);
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 0;
   }
 
   .pie {
