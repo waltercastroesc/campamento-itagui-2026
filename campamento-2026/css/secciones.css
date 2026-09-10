@@ -47,12 +47,14 @@
 }
 
 .sobre {
-  width: min(100%, 22rem);
+  width: 100%;
   margin-top: var(--esp-4);
 }
 
+/* El sobre cerrado se queda angosto, como un sobre de verdad. */
 .sobre__tapa {
-  width: 100%;
+  width: min(100%, 22rem);
+  margin-inline: auto;
   border: 0;
   background: transparent;
   padding: 0;
@@ -150,7 +152,10 @@
   transform: translateY(-0.5rem);
 }
 
+/* La hoja abierta si puede ensancharse: es texto para leer, no un sobre. */
 .sobre__hoja {
+  width: min(100%, 42rem);
+  margin-inline: auto;
   background: var(--hueso);
   color: var(--vino);
   border-radius: var(--radio-tarjeta);
