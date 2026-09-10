@@ -2,6 +2,8 @@
 
 import { normalizar } from "./util/texto.js";
 import { cargarJSON, montarSeccion } from "./util/datos.js";
+import { cargarConRespaldo, traerDatoVivo } from "./util/datosVivos.js";
+import { CONFIG } from "./config.js";
 
 const PASO_TAMANO = 0.125;
 const TAMANO_MINIMO = 1;
@@ -25,14 +27,22 @@ export function filtrarCanciones(canciones, consulta) {
 }
 
 export function iniciar(contenedor) {
-  return montarSeccion(
-    contenedor,
-    () => cargarJSON("datos/canciones.json"),
-    pintarCanciones
-  );
+  return montarSeccion(contenedor, cargarCanciones, pintarCanciones);
 }
 
-function pintarCanciones(contenedor, canciones) {
+async function cargarCanciones() {
+  if (!CONFIG.urlAppsScript) {
+    const lista = await cargarJSON("datos/canciones.json");
+    return { lista, desdeCache: false };
+  }
+  const { datos: lista, desdeCache } = await cargarConRespaldo(
+    "campamento2026:canciones",
+    () => traerDatoVivo("canciones")
+  );
+  return { lista, desdeCache };
+}
+
+function pintarCanciones(contenedor, { lista: canciones, desdeCache }) {
   const envoltorio = document.createElement("div");
   envoltorio.className = "contenedor";
 
@@ -40,6 +50,12 @@ function pintarCanciones(contenedor, canciones) {
   titulo.className = "seccion__titulo";
   titulo.id = "titulo-canciones";
   titulo.textContent = "Canciones";
+
+  const avisoCache = desdeCache ? document.createElement("p") : null;
+  if (avisoCache) {
+    avisoCache.className = "aviso-cache";
+    avisoCache.textContent = "Mostrando la última versión guardada en este dispositivo — puede no estar actualizada.";
+  }
 
   const etiquetaBuscador = document.createElement("label");
   etiquetaBuscador.className = "buscador";
@@ -73,7 +89,9 @@ function pintarCanciones(contenedor, canciones) {
   campo.addEventListener("input", repintar);
   repintar();
 
-  envoltorio.append(titulo, etiquetaBuscador, aviso, libro);
+  envoltorio.append(titulo);
+  if (avisoCache) envoltorio.append(avisoCache);
+  envoltorio.append(etiquetaBuscador, aviso, libro);
   contenedor.append(envoltorio);
 }
 
