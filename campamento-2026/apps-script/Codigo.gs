@@ -91,6 +91,104 @@ function subirFoto(cuerpo) {
   return responder({ ok: true, id: archivo.getId() });
 }
 
+function claveValida(clave) {
+  var esperada = PropertiesService.getScriptProperties().getProperty('CLAVE_PANEL');
+  return !!esperada && clave === esperada;
+}
+
+function verificarClave(cuerpo) {
+  if (!claveValida(cuerpo.clave)) return responder({ ok: false, error: 'clave_incorrecta' });
+  return responder({ ok: true });
+}
+
+function guardarHabitaciones(cuerpo) {
+  if (!claveValida(cuerpo.clave)) return responder({ ok: false, error: 'clave_incorrecta' });
+  try {
+    var libro = obtenerHoja();
+    var habitaciones = libro.getSheetByName('Habitaciones');
+    var integrantes = libro.getSheetByName('Integrantes');
+    limpiarPestana(habitaciones, ['id', 'nombre', 'lider']);
+    limpiarPestana(integrantes, ['habitacion_id', 'nombre']);
+
+    var filasHabitaciones = [];
+    var filasIntegrantes = [];
+    (cuerpo.datos || []).forEach(function (h, indice) {
+      var id = indice + 1;
+      filasHabitaciones.push([id, h.nombre || '', h.lider || '']);
+      (h.integrantes || []).forEach(function (nombre) {
+        filasIntegrantes.push([id, nombre]);
+      });
+    });
+    escribirFilas(habitaciones, filasHabitaciones);
+    escribirFilas(integrantes, filasIntegrantes);
+
+    CacheService.getScriptCache().remove('datos_habitaciones');
+    return responder({ ok: true });
+  } catch (error) {
+    return responder({ ok: false, error: 'fallo_servidor' });
+  }
+}
+
+function guardarProgramacion(cuerpo) {
+  if (!claveValida(cuerpo.clave)) return responder({ ok: false, error: 'clave_incorrecta' });
+  try {
+    var libro = obtenerHoja();
+    var hoja = libro.getSheetByName('Programacion');
+    limpiarPestana(hoja, ['dia', 'numero', 'hora', 'actividad']);
+
+    var filas = [];
+    (cuerpo.datos || []).forEach(function (dia) {
+      (dia.bloques || []).forEach(function (bloque) {
+        filas.push([dia.dia, dia.numero, bloque.hora, bloque.actividad]);
+      });
+    });
+    escribirFilas(hoja, filas);
+
+    CacheService.getScriptCache().remove('datos_programacion');
+    return responder({ ok: true });
+  } catch (error) {
+    return responder({ ok: false, error: 'fallo_servidor' });
+  }
+}
+
+function guardarCanciones(cuerpo) {
+  if (!claveValida(cuerpo.clave)) return responder({ ok: false, error: 'clave_incorrecta' });
+  try {
+    var libro = obtenerHoja();
+    var canciones = libro.getSheetByName('Canciones');
+    var bloques = libro.getSheetByName('CancionesBloques');
+    limpiarPestana(canciones, ['id', 'titulo', 'numero', 'lema']);
+    limpiarPestana(bloques, ['cancion_id', 'orden', 'tipo', 'lineas']);
+
+    var filasCanciones = [];
+    var filasBloques = [];
+    (cuerpo.datos || []).forEach(function (c) {
+      filasCanciones.push([c.id, c.titulo || '', c.numero || '', !!c.lema]);
+      (c.bloques || []).forEach(function (b, orden) {
+        filasBloques.push([c.id, orden + 1, b.tipo, (b.lineas || []).join('\n')]);
+      });
+    });
+    escribirFilas(canciones, filasCanciones);
+    escribirFilas(bloques, filasBloques);
+
+    CacheService.getScriptCache().remove('datos_canciones');
+    return responder({ ok: true });
+  } catch (error) {
+    return responder({ ok: false, error: 'fallo_servidor' });
+  }
+}
+
+/** Borra todas las filas de datos de una pestaña, dejando solo el encabezado. */
+function limpiarPestana(hoja, encabezados) {
+  hoja.clear();
+  hoja.getRange(1, 1, 1, encabezados.length).setValues([encabezados]);
+}
+
+function escribirFilas(hoja, filas) {
+  if (filas.length === 0) return;
+  hoja.getRange(2, 1, filas.length, filas[0].length).setValues(filas);
+}
+
 /** Enruta las lecturas: fotos (por defecto) o datos del panel. */
 function doGet(e) {
   var recurso = (e && e.parameter && e.parameter.recurso) || 'fotos';
@@ -243,4 +341,59 @@ function leerCanciones(libro) {
 function responder(objeto) {
   return ContentService.createTextOutput(JSON.stringify(objeto))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * Corre esto UNA SOLA VEZ desde el editor de Apps Script (selecciona
+ * configurarPanel en el desplegable de funciones y pulsa Ejecutar).
+ * Crea la hoja de calculo del panel con sus pestañas y la siembra con el
+ * contenido de ejemplo que ya trae el sitio.
+ */
+function configurarPanel() {
+  var libro = SpreadsheetApp.create('Campamento 2026 - Panel de administracion');
+  PropertiesService.getScriptProperties().setProperty('HOJA_ID', libro.getId());
+
+  crearPestana(libro, 'Habitaciones', ['id', 'nombre', 'lider'], [
+    [1, 'Habitación 1', 'PENDIENTE — nombre del líder'],
+  ]);
+  crearPestana(libro, 'Integrantes', ['habitacion_id', 'nombre'], [
+    [1, 'PENDIENTE — integrante 1'],
+    [1, 'PENDIENTE — integrante 2'],
+  ]);
+  crearPestana(libro, 'Programacion', ['dia', 'numero', 'hora', 'actividad'], [
+    ['Viernes', 1, '5:00 PM', 'Salida'],
+    ['Viernes', 1, '7:00 PM', 'Llegada y acomodación'],
+  ]);
+  crearPestana(libro, 'Canciones', ['id', 'titulo', 'numero', 'lema'], [
+    ['derrama', 'Derrama', 1, true],
+  ]);
+  crearPestana(libro, 'CancionesBloques', ['cancion_id', 'orden', 'tipo', 'lineas'], [
+    ['derrama', 1, 'estrofa', 'Eres poderoso\nNo lo puedo explicar'],
+    ['derrama', 2, 'coro', 'Soy una vasija esperando ser llena'],
+  ]);
+
+  // La pestaña por defecto de Sheets ("Hoja 1") no hace falta.
+  var porDefecto = libro.getSheetByName('Hoja 1') || libro.getSheetByName('Sheet1');
+  if (porDefecto) libro.deleteSheet(porDefecto);
+
+  Logger.log('Hoja creada: ' + libro.getUrl());
+}
+
+function crearPestana(libro, nombre, encabezados, filasEjemplo) {
+  var hoja = libro.insertSheet(nombre);
+  hoja.getRange(1, 1, 1, encabezados.length).setValues([encabezados]);
+  if (filasEjemplo.length > 0) {
+    hoja.getRange(2, 1, filasEjemplo.length, encabezados.length).setValues(filasEjemplo);
+  }
+}
+
+/**
+ * Corre esto UNA SOLA VEZ desde el editor para fijar la contraseña del panel,
+ * reemplazando "tu-contraseña-aqui" por la clave real antes de ejecutar.
+ * No queda escrita en ningun archivo publico: vive en PropertiesService.
+ */
+function establecerClave() {
+  var nuevaClave = 'tu-contraseña-aqui';
+  PropertiesService.getScriptProperties().setProperty('CLAVE_PANEL', nuevaClave);
+  Logger.log('Contraseña del panel actualizada.');
 }
