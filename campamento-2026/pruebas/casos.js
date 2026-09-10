@@ -12,6 +12,7 @@ import { calcularMedidas, comprimir, validarArchivo, LADO_MAXIMO } from "../js/i
 import { conReintento } from "../js/util/red.js";
 import { enlaceTelefono } from "../js/pie.js";
 import { cargarConRespaldo, traerDatoVivo } from "../js/util/datosVivos.js";
+import { llamarApi, mensajeDeErrorAdmin } from "../js/admin/clave.js";
 
 /** Un almacen tipo localStorage, pero en memoria, para no depender del navegador. */
 function crearAlmacenFalso() {
@@ -385,6 +386,65 @@ export const casos = [
       igual(aSlug("Derrama tu poder"), "derrama-tu-poder", "Deberia usar guiones y minusculas");
       igual(aSlug("¡Corazón Nuevo!"), "corazon-nuevo", "Deberia quitar acentos y signos");
       igual(aSlug("  Espacios   raros  "), "espacios-raros", "Deberia colapsar espacios y recortar bordes");
+    },
+  },
+  {
+    nombre: "llamarApi devuelve el cuerpo cuando el servidor responde ok",
+    entorno: "ambos",
+    async ejecutar() {
+      let cuerpoEnviado;
+      const traerFalso = async (url, opciones) => {
+        cuerpoEnviado = JSON.parse(opciones.body);
+        return { ok: true, status: 200, json: async () => ({ ok: true, datos: [1, 2] }) };
+      };
+      const resultado = await llamarApi("guardarHabitaciones", [{ nombre: "X" }], "clave-1", traerFalso);
+      igual(resultado, { ok: true, datos: [1, 2] }, "Deberia devolver el cuerpo completo");
+      igual(
+        cuerpoEnviado,
+        { accion: "guardarHabitaciones", clave: "clave-1", datos: [{ nombre: "X" }] },
+        "Deberia enviar accion, clave y datos"
+      );
+    },
+  },
+  {
+    nombre: "llamarApi lanza con el codigo de error del servidor",
+    entorno: "ambos",
+    async ejecutar() {
+      const traerFalso = async () => ({ ok: true, status: 200, json: async () => ({ ok: false, error: "clave_incorrecta" }) });
+      const error = await lanza(
+        () => llamarApi("verificarClave", null, "mala", traerFalso),
+        "Deberia lanzar cuando ok es falso"
+      );
+      igual(error.message, "clave_incorrecta", "Deberia propagar el codigo exacto");
+    },
+  },
+  {
+    nombre: "llamarApi lanza sin_conexion si falla la peticion",
+    entorno: "ambos",
+    async ejecutar() {
+      const traerFalso = async () => { throw new TypeError("Failed to fetch"); };
+      const error = await lanza(
+        () => llamarApi("guardarCanciones", [], "clave-1", traerFalso),
+        "Un fallo de red deberia lanzar sin_conexion"
+      );
+      igual(error.message, "sin_conexion", "Deberia normalizar el error de red");
+    },
+  },
+  {
+    nombre: "mensajeDeErrorAdmin traduce los codigos conocidos",
+    entorno: "ambos",
+    ejecutar() {
+      igual(mensajeDeErrorAdmin(new Error("clave_incorrecta")), "Contraseña incorrecta.", "Deberia traducir clave_incorrecta");
+      igual(
+        mensajeDeErrorAdmin(new Error("sin_conexion")),
+        "No pudimos guardar los cambios. Verifica tu conexión e inténtalo de nuevo.",
+        "Deberia traducir sin_conexion"
+      );
+      igual(
+        mensajeDeErrorAdmin(new Error("codigo-desconocido")),
+        "No pudimos guardar los cambios. Verifica tu conexión e inténtalo de nuevo.",
+        "Un codigo desconocido deberia caer en el mensaje generico"
+      );
     },
   },
 ];
