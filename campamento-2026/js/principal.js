@@ -4,7 +4,7 @@
 
 const secciones = [
   ["#portada", () => import("./carta.js")],
-  // ["#habitaciones", () => import("./habitaciones.js")],
+  ["#habitaciones", () => import("./habitaciones.js")],
   ["#programacion", () => import("./programacion.js")],
   // ["#canciones", () => import("./canciones.js")],
   // ["#locacion", () => import("./locacion.js")],

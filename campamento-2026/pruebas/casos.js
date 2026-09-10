@@ -5,6 +5,7 @@
 import { igual, cierto, lanza } from "./afirmar.js";
 import { cargarJSON } from "../js/util/datos.js";
 import { validarProgramacion } from "../js/programacion.js";
+import { contarIntegrantes } from "../js/habitaciones.js";
 
 export const casos = [
   {
@@ -79,6 +80,21 @@ export const casos = [
     ejecutar() {
       const datos = [{ dia: "Sábado", numero: 2, bloques: [{ actividad: "Desayuno" }] }];
       cierto(validarProgramacion(datos).valida === false, "Un bloque sin hora no es valido");
+    },
+  },
+  {
+    nombre: "contarIntegrantes suma al lider y a los integrantes",
+    entorno: "ambos",
+    ejecutar() {
+      const habitacion = { nombre: "Habitación 1", lider: "Ana", integrantes: ["Luis", "Sara"] };
+      igual(contarIntegrantes(habitacion), 3, "Dos integrantes mas el lider son tres personas");
+    },
+  },
+  {
+    nombre: "contarIntegrantes tolera una habitacion sin datos",
+    entorno: "ambos",
+    ejecutar() {
+      igual(contarIntegrantes({ nombre: "Habitación 9" }), 0, "Sin lider ni integrantes son cero");
     },
   },
 ];

@@ -1,0 +1,29 @@
+[
+  {
+    "nombre": "Habitación 1",
+    "lider": "PENDIENTE — nombre del líder",
+    "integrantes": [
+      "PENDIENTE — integrante 1",
+      "PENDIENTE — integrante 2",
+      "PENDIENTE — integrante 3"
+    ]
+  },
+  {
+    "nombre": "Habitación 2",
+    "lider": "PENDIENTE — nombre del líder",
+    "integrantes": [
+      "PENDIENTE — integrante 1",
+      "PENDIENTE — integrante 2"
+    ]
+  },
+  {
+    "nombre": "Habitación 3",
+    "lider": "PENDIENTE — nombre del líder",
+    "integrantes": [
+      "PENDIENTE — integrante 1",
+      "PENDIENTE — integrante 2",
+      "PENDIENTE — integrante 3",
+      "PENDIENTE — integrante 4"
+    ]
+  }
+]

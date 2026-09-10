@@ -230,3 +230,66 @@
     display: block;
   }
 }
+
+/* ---------- Habitaciones ---------- */
+
+.habitaciones {
+  display: grid;
+  gap: var(--esp-3);
+}
+
+.habitacion {
+  background: var(--hueso);
+  color: var(--vino);
+  border-radius: var(--radio-tarjeta);
+  padding: var(--esp-3) var(--esp-4);
+  box-shadow: var(--sombra-tarjeta);
+}
+
+.habitacion__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+}
+
+/* Quita el triangulo por defecto de <summary> en Safari y Chrome. */
+.habitacion__cabecera::-webkit-details-marker {
+  display: none;
+}
+
+.habitacion__nombre {
+  font-family: var(--fuente-titulo);
+  font-size: var(--txt-titular);
+  font-weight: 400;
+}
+
+.habitacion__cuantos {
+  font-size: var(--txt-menor);
+  opacity: 0.75;
+  white-space: nowrap;
+}
+
+.habitacion__cuerpo {
+  padding-top: var(--esp-3);
+}
+
+.habitacion__lider {
+  margin-bottom: var(--esp-2);
+}
+
+.habitacion__integrantes {
+  margin: 0;
+  padding-left: var(--esp-4);
+  display: grid;
+  gap: var(--esp-1);
+}
+
+@media (min-width: 48rem) {
+  .habitaciones {
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  }
+}
