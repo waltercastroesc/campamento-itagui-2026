@@ -20,6 +20,15 @@ import {
   quitarIntegrante,
 } from "../js/admin/habitaciones-datos.js";
 import { agregarBloque, quitarBloque } from "../js/admin/programacion-datos.js";
+import {
+  generarSlugCancion,
+  agregarCancion,
+  quitarCancion,
+  agregarBloqueLetra,
+  quitarBloqueLetra,
+  textoALineas,
+  lineasATexto,
+} from "../js/admin/canciones-datos.js";
 
 /** Un almacen tipo localStorage, pero en memoria, para no depender del navegador. */
 function crearAlmacenFalso() {
@@ -518,6 +527,86 @@ export const casos = [
       };
       const resultado = quitarBloque(dia, 0);
       igual(resultado.bloques, [{ hora: "8:00 AM", actividad: "Desayuno" }], "Deberia quedar solo el segundo");
+    },
+  },
+  {
+    nombre: "generarSlugCancion usa el slug del titulo si esta libre",
+    entorno: "ambos",
+    ejecutar() {
+      igual(generarSlugCancion("Nueva canción", []), "nueva-cancion", "Deberia ser el slug simple");
+    },
+  },
+  {
+    nombre: "generarSlugCancion agrega un sufijo si el slug ya existe",
+    entorno: "ambos",
+    ejecutar() {
+      const existentes = [{ id: "derrama" }, { id: "derrama-2" }];
+      igual(generarSlugCancion("Derrama", existentes), "derrama-3", "Deberia probar sufijos hasta encontrar uno libre");
+    },
+  },
+  {
+    nombre: "agregarCancion añade una cancion nueva con id generado y un bloque vacio",
+    entorno: "ambos",
+    ejecutar() {
+      const resultado = agregarCancion([], "Mi canción", 3, true);
+      igual(resultado.length, 1, "Deberia haber una cancion");
+      igual(
+        resultado[0],
+        { id: "mi-cancion", titulo: "Mi canción", numero: 3, lema: true, bloques: [{ tipo: "estrofa", lineas: [] }] },
+        "Deberia traer un bloque de estrofa vacio para empezar a escribir"
+      );
+    },
+  },
+  {
+    nombre: "quitarCancion elimina por indice",
+    entorno: "ambos",
+    ejecutar() {
+      const original = [{ id: "a" }, { id: "b" }];
+      igual(quitarCancion(original, 0).map((c) => c.id), ["b"], "Deberia quedar solo la segunda");
+    },
+  },
+  {
+    nombre: "agregarBloqueLetra añade una estrofa vacia al final",
+    entorno: "ambos",
+    ejecutar() {
+      const cancion = { id: "x", titulo: "X", bloques: [{ tipo: "coro", lineas: ["Solo esto"] }] };
+      const resultado = agregarBloqueLetra(cancion);
+      igual(resultado.bloques.length, 2, "Deberia haber dos bloques");
+      igual(resultado.bloques[1], { tipo: "estrofa", lineas: [] }, "El nuevo deberia ser una estrofa vacia");
+    },
+  },
+  {
+    nombre: "quitarBloqueLetra elimina por indice",
+    entorno: "ambos",
+    ejecutar() {
+      const cancion = {
+        id: "x",
+        bloques: [
+          { tipo: "estrofa", lineas: ["Uno"] },
+          { tipo: "coro", lineas: ["Dos"] },
+        ],
+      };
+      const resultado = quitarBloqueLetra(cancion, 1);
+      igual(resultado.bloques, [{ tipo: "estrofa", lineas: ["Uno"] }], "Deberia quedar solo la estrofa");
+    },
+  },
+  {
+    nombre: "textoALineas separa por saltos de linea y descarta lineas vacias",
+    entorno: "ambos",
+    ejecutar() {
+      igual(
+        textoALineas("Primera línea\n\n  Segunda línea  \n"),
+        ["Primera línea", "Segunda línea"],
+        "Deberia recortar espacios y descartar lineas en blanco"
+      );
+      igual(textoALineas(""), [], "Un texto vacio deberia dar un arreglo vacio");
+    },
+  },
+  {
+    nombre: "lineasATexto une las lineas con saltos de linea",
+    entorno: "ambos",
+    ejecutar() {
+      igual(lineasATexto(["Uno", "Dos", "Tres"]), "Uno\nDos\nTres", "Deberia unir con saltos de linea");
     },
   },
 ];
