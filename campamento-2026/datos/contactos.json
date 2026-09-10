@@ -1,0 +1,15 @@
+{
+  "whatsapp": "PENDIENTE — enlace del grupo de WhatsApp",
+  "emergencia": [
+    {
+      "nombre": "PENDIENTE — nombre",
+      "rol": "Coordinador general",
+      "telefono": "+57 300 000 0000"
+    },
+    {
+      "nombre": "PENDIENTE — nombre",
+      "rol": "Enfermería",
+      "telefono": "+57 300 000 0000"
+    }
+  ]
+}

@@ -10,6 +10,7 @@ import { normalizar } from "../js/util/texto.js";
 import { filtrarCanciones, textoDeCancion } from "../js/canciones.js";
 import { calcularMedidas, comprimir, validarArchivo, LADO_MAXIMO } from "../js/imagen.js";
 import { conReintento } from "../js/util/red.js";
+import { enlaceTelefono } from "../js/pie.js";
 
 const CANCIONES_DE_PRUEBA = [
   {
@@ -284,6 +285,15 @@ export const casos = [
       igual(mapa.height, 800, "El alto deberia bajar proporcionalmente a 800");
       cierto(comprimida.type === "image/jpeg", "El resultado deberia ser JPEG");
       cierto(comprimida.size < original.size, "La version comprimida deberia pesar menos");
+    },
+  },
+  {
+    nombre: "enlaceTelefono deja el numero listo para marcar",
+    entorno: "ambos",
+    ejecutar() {
+      igual(enlaceTelefono("+57 300 000 0000"), "tel:+573000000000", "Deberia quitar los espacios");
+      igual(enlaceTelefono("(604) 123-4567"), "tel:6041234567", "Deberia quitar parentesis y guiones");
+      igual(enlaceTelefono(""), "", "Sin numero no deberia haber enlace");
     },
   },
 ];

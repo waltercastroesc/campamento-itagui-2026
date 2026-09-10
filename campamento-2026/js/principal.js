@@ -9,8 +9,8 @@ const secciones = [
   ["#canciones", () => import("./canciones.js")],
   ["#locacion", () => import("./locacion.js")],
   ["#fotos", () => import("./galeria.js")],
-  // ["#pie", () => import("./pie.js")],
-  // ["#navegacion", () => import("./navegacion.js")],
+  ["#pie", () => import("./pie.js")],
+  ["#navegacion", () => import("./navegacion.js")],
 ];
 
 for (const [selector, traerModulo] of secciones) {

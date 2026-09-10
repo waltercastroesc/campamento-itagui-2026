@@ -719,3 +719,143 @@
   top: var(--esp-3);
   right: var(--esp-3);
 }
+
+/* ---------- Navegacion fija ---------- */
+
+.navegacion {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  background: var(--vino);
+  border-top: 0.0625rem solid rgba(254, 249, 221, 0.25);
+  box-shadow: var(--sombra-flotante);
+  /* Respeta la barra de gestos de los iPhone. */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.navegacion__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  height: var(--alto-navegacion);
+}
+
+.navegacion__enlace {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  text-decoration: none;
+  color: var(--crema);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.navegacion__lista li {
+  flex: 1;
+}
+
+/* ---------- Pie ---------- */
+
+.pie {
+  display: grid;
+  gap: var(--esp-4);
+  padding-block: var(--esp-5);
+  color: var(--vino);
+}
+
+.pie__marcas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-3);
+}
+
+.pie__logo {
+  max-height: 3.5rem;
+  width: auto;
+}
+
+.pie__separador {
+  width: 0.0625rem;
+  align-self: stretch;
+  background: currentColor;
+  opacity: 0.35;
+}
+
+.pie__leyenda {
+  margin: 0;
+  font-size: var(--txt-menor);
+  font-weight: 600;
+}
+
+.pie__enlaces {
+  display: grid;
+  gap: var(--esp-3);
+  justify-items: center;
+}
+
+.pie__whatsapp {
+  background: var(--vino);
+  color: var(--crema);
+}
+
+.pie__emergencia {
+  width: min(100%, 26rem);
+}
+
+.pie__emergencia-titulo {
+  cursor: pointer;
+  font-weight: 600;
+  text-align: center;
+}
+
+.pie__contactos {
+  list-style: none;
+  margin: var(--esp-3) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--esp-3);
+}
+
+.pie__contactos li {
+  display: grid;
+  gap: var(--esp-1);
+}
+
+.pie__contacto-quien {
+  font-size: var(--txt-menor);
+}
+
+.pie__contacto-tel {
+  font-weight: 700;
+  /* Area de toque comoda: en una emergencia nadie deberia fallar el dedo. */
+  padding: var(--esp-2) 0;
+}
+
+@media (min-width: 48rem) {
+  .navegacion {
+    top: 0;
+    bottom: auto;
+    border-top: none;
+    border-bottom: 0.0625rem solid rgba(254, 249, 221, 0.25);
+  }
+
+  .navegacion__lista {
+    justify-content: center;
+    gap: var(--esp-5);
+  }
+
+  .navegacion__lista li {
+    flex: 0 0 auto;
+  }
+
+  .pie {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+}
