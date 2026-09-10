@@ -878,6 +878,8 @@
 
 .pie {
   display: grid;
+  justify-items: center;
+  text-align: center;
   gap: var(--esp-4);
   padding-block: var(--esp-5);
   color: var(--vino);
@@ -998,8 +1000,4 @@
     margin-left: 0;
   }
 
-  .pie {
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-  }
 }
