@@ -47,44 +47,107 @@
 }
 
 .sobre {
-  width: min(100%, 32rem);
+  width: min(100%, 22rem);
   margin-top: var(--esp-4);
 }
 
 .sobre__tapa {
   width: 100%;
-  border: 0.125rem solid var(--crema);
+  border: 0;
   background: transparent;
-  color: var(--crema);
-  border-radius: var(--radio-tarjeta);
-  padding: var(--esp-4);
-  display: grid;
-  gap: var(--esp-2);
-  justify-items: center;
-  transition: transform 0.4s ease, background-color 0.4s ease;
+  padding: 0;
+  cursor: pointer;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+/* Vista de sobre cerrado: la carta asoma por arriba, el bolsillo la sostiene. */
+.sobre__interior {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+}
+
+.sobre__carta-vista {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 82%;
+  height: 64%;
+  background: var(--hueso);
+  border-radius: 1rem 1rem 0.4rem 0.4rem;
+  box-shadow: 0 0.5rem 1.25rem rgba(85, 11, 24, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15em;
+  color: var(--vino);
+  font-family: var(--fuente-titulo);
+  font-size: var(--txt-titular);
+  text-transform: uppercase;
+  line-height: 1.15;
+  z-index: 1;
+}
+
+.sobre__linea {
+  display: block;
+}
+
+.sobre__cuerpo {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 56%;
+  background: var(--crema);
+  border-radius: 0 0 var(--radio-tarjeta) var(--radio-tarjeta);
+  z-index: 2;
+}
+
+/* La solapa doblada del sobre: una fina linea vino recorta su silueta,
+   dibujada como un triangulo vino con otro crema encima, un poco mas chico. */
+.sobre__pliegue {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 0, 100% 0, 50% 72%);
+  background: var(--vino);
+}
+
+.sobre__pliegue::after {
+  content: "";
+  position: absolute;
+  inset: 0.1rem 0.1rem 0 0.1rem;
+  clip-path: polygon(0 0, 100% 0, 50% 71%);
+  background: var(--crema);
 }
 
 .sobre__sello {
+  position: absolute;
+  top: 72%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: grid;
   place-items: center;
-  width: 4.5rem;
-  height: 4.5rem;
+  width: 3.75rem;
+  height: 3.75rem;
   border-radius: 50%;
   background: var(--crema);
+  border: 0.09rem solid var(--vino);
   color: var(--vino);
-  font-size: 0.5rem;
+  font-family: var(--fuente-texto);
+  font-size: 0.45rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
-}
-
-.sobre__rotulo {
-  font-family: var(--fuente-titulo);
-  font-size: var(--txt-titular);
+  letter-spacing: 0.08em;
+  text-align: center;
+  padding: 0.3rem;
+  z-index: 3;
 }
 
 .sobre--abierto .sobre__tapa {
   transform: translateY(-0.5rem);
-  background: rgba(254, 249, 221, 0.08);
 }
 
 .sobre__hoja {

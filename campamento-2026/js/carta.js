@@ -37,6 +37,12 @@ function pintarPortada(contenedor, carta) {
   contenedor.append(envoltorio);
 }
 
+/** Reparte un rotulo en dos lineas: la primera palabra arriba, el resto abajo. */
+function partirEnDosLineas(texto) {
+  const [primera, ...resto] = texto.split(" ");
+  return [primera, resto.join(" ")];
+}
+
 function construirSobre(carta) {
   const bloque = document.createElement("div");
   bloque.className = "sobre";
@@ -48,15 +54,35 @@ function construirSobre(carta) {
   boton.setAttribute("aria-expanded", "false");
   boton.setAttribute("aria-controls", "sobre-contenido");
 
+  const interior = document.createElement("span");
+  interior.className = "sobre__interior";
+
+  const vista = document.createElement("span");
+  vista.className = "sobre__carta-vista";
+
+  const linea1 = document.createElement("span");
+  linea1.className = "sobre__linea";
+  const linea2 = document.createElement("span");
+  linea2.className = "sobre__linea";
+  const [primeraLinea, segundaLinea] = partirEnDosLineas(carta.titulo || "Carta para ti");
+  linea1.textContent = primeraLinea;
+  linea2.textContent = segundaLinea;
+  vista.append(linea1, linea2);
+
+  const cuerpo = document.createElement("span");
+  cuerpo.className = "sobre__cuerpo";
+
+  const pliegue = document.createElement("span");
+  pliegue.className = "sobre__pliegue";
+  pliegue.setAttribute("aria-hidden", "true");
+
   const sello = document.createElement("span");
   sello.className = "sobre__sello";
   sello.textContent = "TRASCIENDE";
 
-  const rotulo = document.createElement("span");
-  rotulo.className = "sobre__rotulo";
-  rotulo.textContent = carta.titulo || "Carta para ti";
-
-  boton.append(sello, rotulo);
+  cuerpo.append(pliegue, sello);
+  interior.append(vista, cuerpo);
+  boton.append(interior);
 
   const hoja = document.createElement("div");
   hoja.className = "sobre__hoja";
@@ -86,7 +112,11 @@ function construirSobre(carta) {
     boton.setAttribute("aria-expanded", String(!abierto));
     bloque.classList.toggle("sobre--abierto", !abierto);
     hoja.hidden = abierto;
-    rotulo.textContent = abierto ? (carta.titulo || "Carta para ti") : "Cerrar la carta";
+    const [nuevaPrimera, nuevaSegunda] = partirEnDosLineas(
+      abierto ? (carta.titulo || "Carta para ti") : "Cerrar la carta"
+    );
+    linea1.textContent = nuevaPrimera;
+    linea2.textContent = nuevaSegunda;
   });
 
   bloque.append(boton, hoja);
