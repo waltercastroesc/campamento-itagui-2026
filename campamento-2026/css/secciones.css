@@ -831,8 +831,8 @@
 }
 
 .pie__whatsapp {
-  background: var(--vino);
-  color: var(--crema);
+  color: var(--vino);
+  text-decoration: none;
 }
 
 .pie__emergencia {
@@ -841,8 +841,36 @@
 
 .pie__emergencia-titulo {
   cursor: pointer;
-  font-weight: 600;
-  text-align: center;
+  list-style: none;
+}
+
+.pie__emergencia-titulo::-webkit-details-marker {
+  display: none;
+}
+
+.pie__emergencia-titulo::marker {
+  content: "";
+}
+
+.pie__enlace-fila {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+}
+
+.pie__enlace-icono {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+}
+
+.pie__enlace-texto {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: left;
 }
 
 .pie__contactos {
