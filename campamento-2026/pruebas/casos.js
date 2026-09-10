@@ -6,6 +6,26 @@ import { igual, cierto, lanza } from "./afirmar.js";
 import { cargarJSON } from "../js/util/datos.js";
 import { validarProgramacion } from "../js/programacion.js";
 import { contarIntegrantes } from "../js/habitaciones.js";
+import { normalizar } from "../js/util/texto.js";
+import { filtrarCanciones, textoDeCancion } from "../js/canciones.js";
+
+const CANCIONES_DE_PRUEBA = [
+  {
+    id: "derrama",
+    titulo: "Derrama",
+    numero: 1,
+    bloques: [
+      { tipo: "estrofa", lineas: ["Tu ser me estremece", "Anhelo tu espíritu"] },
+      { tipo: "coro", lineas: ["Soy una vasija esperando ser llena", "Rindo mi corazón"] },
+    ],
+  },
+  {
+    id: "derrama-tu-poder",
+    titulo: "Derrama tu poder",
+    numero: 2,
+    bloques: [{ tipo: "estrofa", lineas: ["Muéveme como nunca me has movido"] }],
+  },
+];
 
 export const casos = [
   {
@@ -95,6 +115,66 @@ export const casos = [
     entorno: "ambos",
     ejecutar() {
       igual(contarIntegrantes({ nombre: "Habitación 9" }), 0, "Sin lider ni integrantes son cero");
+    },
+  },
+  {
+    nombre: "normalizar quita acentos y pasa a minusculas",
+    entorno: "ambos",
+    ejecutar() {
+      igual(normalizar("ESPÍRITU"), "espiritu", "Deberia quedar sin tilde y en minusculas");
+      igual(normalizar("  Corazón  "), "corazon", "Deberia recortar los espacios de los bordes");
+      igual(normalizar(null), "", "Un valor nulo deberia dar cadena vacia");
+    },
+  },
+  {
+    nombre: "textoDeCancion junta el titulo con todas las lineas",
+    entorno: "ambos",
+    ejecutar() {
+      const cancion = {
+        titulo: "Derrama",
+        bloques: [
+          { tipo: "estrofa", lineas: ["Eres poderoso", "No lo puedo explicar"] },
+          { tipo: "coro", lineas: ["Soy una vasija esperando ser llena"] },
+        ],
+      };
+      igual(
+        textoDeCancion(cancion),
+        "Derrama Eres poderoso No lo puedo explicar Soy una vasija esperando ser llena",
+        "Deberia concatenar titulo y lineas separados por espacio"
+      );
+    },
+  },
+  {
+    nombre: "filtrarCanciones encuentra por titulo",
+    entorno: "ambos",
+    ejecutar() {
+      const resultado = filtrarCanciones(CANCIONES_DE_PRUEBA, "poder");
+      igual(resultado.map((c) => c.id), ["derrama-tu-poder"], "Solo la segunda tiene 'poder' en el titulo");
+    },
+  },
+  {
+    nombre: "filtrarCanciones encuentra por una palabra de la letra",
+    entorno: "ambos",
+    ejecutar() {
+      const resultado = filtrarCanciones(CANCIONES_DE_PRUEBA, "vasija");
+      igual(resultado.map((c) => c.id), ["derrama"], "'vasija' solo aparece en la letra de la primera");
+    },
+  },
+  {
+    nombre: "filtrarCanciones ignora los acentos de la consulta y de la letra",
+    entorno: "ambos",
+    ejecutar() {
+      const resultado = filtrarCanciones(CANCIONES_DE_PRUEBA, "corazon");
+      igual(resultado.map((c) => c.id), ["derrama"], "'corazon' sin tilde deberia hallar 'corazón'");
+    },
+  },
+  {
+    nombre: "filtrarCanciones devuelve todo con consulta vacia y nada cuando no hay coincidencia",
+    entorno: "ambos",
+    ejecutar() {
+      igual(filtrarCanciones(CANCIONES_DE_PRUEBA, "").length, 2, "Sin consulta se ven todas");
+      igual(filtrarCanciones(CANCIONES_DE_PRUEBA, "   ").length, 2, "Solo espacios equivale a sin consulta");
+      igual(filtrarCanciones(CANCIONES_DE_PRUEBA, "zamba").length, 0, "Una palabra ausente no deberia hallar nada");
     },
   },
 ];
