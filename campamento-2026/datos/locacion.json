@@ -1,9 +1,9 @@
 {
   "nombre": "Finca San Sebastián",
   "direccion": "Girardota, Antioquia",
-  "mapaEmbebido": "https://www.google.com/maps?q=Girardota,+Antioquia&output=embed",
-  "enlaceMaps": "https://www.google.com/maps/search/?api=1&query=Girardota%2C+Antioquia",
-  "enlaceWaze": "https://waze.com/ul?q=Girardota%2C%20Antioquia&navigate=yes",
+  "mapaEmbebido": "https://www.google.com/maps?q=6.3905826,-75.4642703&z=16&output=embed",
+  "enlaceMaps": "https://maps.app.goo.gl/AyrE8NXzGV7cZxQ97",
+  "enlaceWaze": "https://waze.com/ul?ll=6.3905826,-75.4642703&navigate=yes",
   "puntos": [
     "Auditorio",
     "Comedor",
