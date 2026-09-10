@@ -46,7 +46,7 @@ Se reutiliza **el mismo Apps Script y la misma cuenta de Google** que ya adminis
 
 `habitaciones.js`, `programacion.js` y `canciones.js` dejan de leer `datos/*.json` de forma fija y pasan a pedir los datos al Apps Script en cada visita, con una copia de respaldo guardada en el propio dispositivo (`localStorage`) para cuando falla la señal. El resto del sitio (carta, locación, contactos, fotos) no cambia.
 
-Los archivos estáticos `datos/habitaciones.json`, `datos/programacion.json` y `datos/canciones.json` **se conservan** como contenido de ejemplo para desarrollo local y para `pruebas.html`, pero ya no son la fuente que usa el sitio publicado una vez configurado el Apps Script (mismo patrón que `CONFIG.urlAppsScript` ya usa para las fotos: si está vacío, se degrada a un aviso en vez de fallar).
+Los archivos estáticos `datos/habitaciones.json`, `datos/programacion.json` y `datos/canciones.json` **se conservan** como contenido de ejemplo para desarrollo local y para `pruebas.html`. Mientras `CONFIG.urlAppsScript` esté vacío (como en desarrollo, antes de publicar el Apps Script extendido), estas tres secciones siguen leyendo esos archivos directamente, exactamente como hoy. En cuanto se configura la URL, pasan a leer en vivo de Sheets con el respaldo de `localStorage` descrito en §7 — el archivo estático deja de usarse en producción, pero sigue sirviendo como dato de ejemplo para quien abra el proyecto en su computador sin haber configurado nada todavía.
 
 ### Por qué Google Sheets y no una base de datos propia
 
@@ -130,10 +130,8 @@ Cada guardado exitoso limpia la caché de 60 segundos de ese recurso, igual que 
 **Cada guardado reemplaza el contenido completo de sus pestañas correspondientes**, no hace parches fila por fila: el panel envía el arreglo completo (todas las habitaciones, o toda la programación, o todas las canciones) y Apps Script borra y vuelve a escribir esas pestañas enteras. Esto evita tener que manejar altas/bajas de filas individuales de Sheets desde el panel — agregar o quitar una habitación es simplemente enviar un arreglo con un elemento más o uno menos.
 
 **Asignación de identificadores nuevos:**
-- Habitación nueva: `id` es el siguiente número entero disponible (máximo actual + 1).
-- Canción nueva: `id` es un slug generado del título (minúsculas, sin acentos, espacios por guiones — igual que ya se hizo a mano para `"derrama"` y `"derrama-tu-poder"`). Si el slug ya existe, se le agrega un sufijo numérico (`-2`, `-3`, ...).
-
-Esta lógica de asignación de `id` es una función pura y se prueba igual que las demás (ver §9).
+- El `id` de la pestaña `Habitaciones` es puramente interno de Sheets — solo sirve para enlazar filas de `Integrantes` a su habitación. La forma pública de `habitaciones.json` nunca tuvo `id` (solo `nombre`, `lider`, `integrantes`) y eso no cambia: el panel envía y recibe habitaciones sin `id`; es `Codigo.gs` quien le asigna un número de fila al reescribir la pestaña en cada guardado. No hay lógica de cliente que probar aquí.
+- Canción nueva: `id` sí es parte de la forma pública de `canciones.json` (ya lo era desde el sitio original). Se genera del título en el panel: minúsculas, sin acentos, espacios por guiones — igual que ya se hizo a mano para `"derrama"` y `"derrama-tu-poder"`. Si el slug ya existe entre las canciones actuales, se le agrega un sufijo numérico (`-2`, `-3`, ...). Esta función sí es pura y se prueba (ver §9).
 
 ### Configuración inicial
 
