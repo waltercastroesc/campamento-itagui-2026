@@ -62,7 +62,7 @@ function subirFoto(cuerpo, alProgreso) {
 }
 
 async function listarFotos() {
-  const respuesta = await fetch(CONFIG.urlAppsScript, { redirect: "follow" });
+  const respuesta = await fetch(`${CONFIG.urlAppsScript}?recurso=fotos`, { redirect: "follow" });
   if (!respuesta.ok) throw new Error("fallo_servidor");
   const datos = await respuesta.json();
   if (!datos.ok) throw new Error(datos.error || "fallo_servidor");
@@ -167,7 +167,7 @@ async function procesarUna(archivo, autor) {
     const datos = await aBase64(comprimida);
     estado.textContent = "Subiendo…";
     return subirFoto(
-      { nombre: archivo.name, mime: "image/jpeg", datos, autor },
+      { accion: "subirFoto", nombre: archivo.name, mime: "image/jpeg", datos, autor },
       (fraccion) => {
         relleno.style.width = `${Math.round(fraccion * 100)}%`;
       }
