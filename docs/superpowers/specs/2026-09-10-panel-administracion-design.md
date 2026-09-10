@@ -144,7 +144,7 @@ Una función `configurarPanel()`, para correr una sola vez desde el editor de Ap
 
 ## 6. Panel de administración (`admin.html`)
 
-Página nueva, publicada junto con el resto del sitio (`campamento-2026/admin.html`), protegida con contraseña — no aparece enlazada desde ninguna página pública.
+Página nueva, publicada junto con el resto del sitio (`campamento-2026/admin.html`), protegida con contraseña. Se enlaza con un texto discreto («Panel de administración») en el pie de página, junto a los contactos de emergencia — decisión revisada a pedido del liderazgo tras la implementación inicial, que la dejaba sin enlace público. La contraseña sigue siendo la única protección real: el enlace solo la hace más fácil de encontrar para quien la necesita.
 
 **Entrada:** formulario que pide la contraseña. Se guarda en la sesión del navegador (no en ningún archivo). Si es incorrecta, Apps Script la rechaza y se muestra el aviso sin guardar nada.
 

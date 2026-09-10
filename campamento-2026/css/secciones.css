@@ -847,6 +847,17 @@
   padding: var(--esp-2) 0;
 }
 
+/* Discreto a proposito: solo quien lo busca lo encuentra facil; la
+   contraseña sigue siendo la unica proteccion real para editar. */
+.pie__admin {
+  display: block;
+  text-align: center;
+  margin-top: var(--esp-3);
+  font-size: var(--txt-menor);
+  opacity: 0.6;
+  text-decoration: underline;
+}
+
 @media (min-width: 48rem) {
   .navegacion {
     top: 0;
