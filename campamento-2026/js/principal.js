@@ -8,7 +8,7 @@ const secciones = [
   ["#programacion", () => import("./programacion.js")],
   ["#canciones", () => import("./canciones.js")],
   ["#locacion", () => import("./locacion.js")],
-  // ["#fotos", () => import("./galeria.js")],
+  ["#fotos", () => import("./galeria.js")],
   // ["#pie", () => import("./pie.js")],
   // ["#navegacion", () => import("./navegacion.js")],
 ];
