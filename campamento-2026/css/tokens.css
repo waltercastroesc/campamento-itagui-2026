@@ -1,0 +1,80 @@
+/* tokens.css — origen unico de fuentes, color, escala y espaciado. */
+
+@font-face {
+  font-family: "TAN Meringue";
+  src: url("../fuentes/TAN MERINGUE.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../fuentes/Poppins-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../fuentes/Poppins-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../fuentes/Poppins-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../fuentes/Poppins-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Color — paleta de marca, cerrada. */
+  --vino: #550b18;
+  --crema: #fef9dd;
+  --hueso: #fbf8f3;
+
+  /* Grises neutros, unicamente para sombras y veladuras. */
+  --sombra-tarjeta: 0 0.25rem 1rem rgba(0, 0, 0, 0.14);
+  --sombra-flotante: 0 -0.125rem 0.75rem rgba(0, 0, 0, 0.18);
+  --velo-oscuro: rgba(0, 0, 0, 0.72);
+
+  /* Tipografia */
+  --fuente-titulo: "TAN Meringue", Georgia, "Times New Roman", serif;
+  --fuente-texto: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Escala fluida: crece con la pantalla sin saltos. */
+  --txt-portada: clamp(2.75rem, 13vw, 7rem);
+  --txt-seccion: clamp(2rem, 8vw, 3.5rem);
+  --txt-titular: clamp(1.25rem, 4.5vw, 1.75rem);
+  --txt-cuerpo: clamp(1rem, 3.6vw, 1.0625rem);
+  --txt-menor: 0.875rem;
+
+  /* Espaciado */
+  --esp-1: 0.25rem;
+  --esp-2: 0.5rem;
+  --esp-3: 1rem;
+  --esp-4: 1.5rem;
+  --esp-5: 2.5rem;
+  --esp-6: 4rem;
+
+  /* Formas */
+  --radio-tarjeta: 1.75rem;
+  --radio-pill: 999rem;
+  --ancho-maximo: 72rem;
+
+  /* Alto de la barra de navegacion, para reservar espacio al final del body. */
+  --alto-navegacion: 4rem;
+}

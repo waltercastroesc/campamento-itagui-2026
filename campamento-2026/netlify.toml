@@ -1,0 +1,4 @@
+# El sitio es estatico puro: no hay nada que compilar.
+[build]
+  publish = "."
+  command = ""

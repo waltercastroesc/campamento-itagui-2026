@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pruebas — Campamento 2026</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 50rem; padding-inline: 1rem; }
+    h1 { font-size: 1.5rem; }
+    ol { list-style: none; padding: 0; }
+    li { padding: 0.5rem 0.75rem; border-radius: 0.375rem; margin-bottom: 0.25rem; }
+    li.pasa { background: #e6f4ea; color: #14532d; }
+    li.falla { background: #fdeaea; color: #7f1d1d; }
+    pre { margin: 0.5rem 0 0; white-space: pre-wrap; font-size: 0.8125rem; }
+    #resumen { font-weight: 700; font-size: 1.125rem; margin-top: 1.5rem; }
+  </style>
+</head>
+<body>
+  <h1>Pruebas del sitio del Campamento 2026</h1>
+  <p>Ábrela con el sitio servido por HTTP: <code>python -m http.server 8000</code> y entra a
+    <code>http://localhost:8000/pruebas.html</code>.</p>
+  <ol id="resultados"></ol>
+  <p id="resumen">Ejecutando…</p>
+
+  <script type="module">
+    import { casos } from "./pruebas/casos.js";
+
+    const lista = document.querySelector("#resultados");
+    const resumen = document.querySelector("#resumen");
+    let pasaron = 0;
+    let fallaron = 0;
+
+    for (const caso of casos) {
+      const fila = document.createElement("li");
+      try {
+        await caso.ejecutar();
+        pasaron += 1;
+        fila.className = "pasa";
+        fila.textContent = `✓ ${caso.nombre}`;
+      } catch (error) {
+        fallaron += 1;
+        fila.className = "falla";
+        fila.textContent = `✗ ${caso.nombre}`;
+        const detalle = document.createElement("pre");
+        detalle.textContent = error.message;
+        fila.append(detalle);
+      }
+      lista.append(fila);
+    }
+
+    resumen.textContent = `${pasaron} pasaron, ${fallaron} fallaron`;
+    resumen.style.color = fallaron > 0 ? "#7f1d1d" : "#14532d";
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "type": "module",
+  "name": "campamento-itagui-2026",
+  "description": "Sitio del Campamento Itagui 2026. El campo type:module solo sirve para correr las pruebas con Node; el sitio no necesita compilarse."
+}
