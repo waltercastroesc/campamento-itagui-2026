@@ -2,6 +2,8 @@
 // Escritorio: tres columnas. Celular: pestañas, porque apilarlos son tres pantallas de scroll.
 
 import { cargarJSON, montarSeccion } from "./util/datos.js";
+import { cargarConRespaldo, traerDatoVivo } from "./util/datosVivos.js";
+import { CONFIG } from "./config.js";
 
 /**
  * Comprueba la forma de programacion.json antes de pintarlo.
@@ -28,19 +30,28 @@ export function validarProgramacion(datos) {
 }
 
 export function iniciar(contenedor) {
-  return montarSeccion(
-    contenedor,
-    async () => {
-      const datos = await cargarJSON("datos/programacion.json");
-      const revision = validarProgramacion(datos);
-      if (!revision.valida) throw new Error(revision.motivo);
-      return datos;
-    },
-    pintarProgramacion
-  );
+  return montarSeccion(contenedor, cargarProgramacion, pintarProgramacion);
 }
 
-function pintarProgramacion(contenedor, dias) {
+async function cargarProgramacion() {
+  let lista;
+  let desdeCache = false;
+  if (!CONFIG.urlAppsScript) {
+    lista = await cargarJSON("datos/programacion.json");
+  } else {
+    const resultado = await cargarConRespaldo(
+      "campamento2026:programacion",
+      () => traerDatoVivo("programacion")
+    );
+    lista = resultado.datos;
+    desdeCache = resultado.desdeCache;
+  }
+  const revision = validarProgramacion(lista);
+  if (!revision.valida) throw new Error(revision.motivo);
+  return { lista, desdeCache };
+}
+
+function pintarProgramacion(contenedor, { lista: dias, desdeCache }) {
   const envoltorio = document.createElement("div");
   envoltorio.className = "contenedor";
 
@@ -49,6 +60,13 @@ function pintarProgramacion(contenedor, dias) {
   titulo.id = "titulo-programacion";
   titulo.textContent = "Programación";
   envoltorio.append(titulo);
+
+  if (desdeCache) {
+    const aviso = document.createElement("p");
+    aviso.className = "aviso-cache";
+    aviso.textContent = "Mostrando la última versión guardada en este dispositivo — puede no estar actualizada.";
+    envoltorio.append(aviso);
+  }
 
   const pestanas = document.createElement("div");
   pestanas.className = "pestanas";
