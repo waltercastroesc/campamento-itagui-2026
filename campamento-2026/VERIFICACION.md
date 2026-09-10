@@ -30,6 +30,19 @@
 - [ ] Las cuotas vigentes de Apps Script para cuentas personales están revisadas
       en developers.google.com/apps-script/guides/services/quotas
 
+## Panel de administración
+
+- [ ] Correr `configurarPanel()` una vez desde el editor de Apps Script
+- [ ] Correr `establecerClave()` una vez con la contraseña real
+- [ ] Compartir el enlace a `admin.html` y la contraseña solo con la persona
+      de confianza
+- [ ] Probar agregar una habitación, un integrante, una actividad y una
+      canción desde el panel, y confirmar que aparecen en el sitio público
+      (hasta 60 segundos de espera por la caché)
+- [ ] Probar una contraseña incorrecta y confirmar que no se guarda nada
+- [ ] Abrir la hoja de cálculo del panel y confirmar que "Ver historial de
+      versiones" funciona, como red de seguridad ante un borrado accidental
+
 ## Pruebas en dispositivos reales
 
 - [ ] Subir una foto desde Android con datos móviles
@@ -44,8 +57,17 @@
 
 ## Ya verificado en desarrollo
 
-- Suite de pruebas: 24/24 en Node (`node pruebas/ejecutar-en-node.js`),
-  25/25 en el navegador (`pruebas.html`, incluida la compresión de imagen real).
+- Suite de pruebas: 49/49 en Node (`node pruebas/ejecutar-en-node.js`),
+  50/50 en el navegador (`pruebas.html`, incluida la compresión de imagen real).
+- Panel de administración: verificado con un Apps Script simulado (fetch
+  falso, sin depender de una publicación real). Contraseña incorrecta
+  rechaza sin mostrar las secciones; contraseña correcta carga las tres
+  secciones con su contenido; agregar habitación, integrante, actividad y
+  canción, y guardar cada sección, confirma «Guardado.». Sin desbordamiento
+  horizontal a 390px de ancho (se corrigió un defecto real encontrado aquí:
+  los campos de texto del panel no se encogían y desbordaban su fila).
+  La lectura/escritura real contra Google Sheets queda pendiente de que se
+  publique el Apps Script extendido (ver «Panel de administración» arriba).
 - Aislamiento: se probó renombrando cada uno de los seis `datos/*.json` por
   turnos — la sección afectada muestra su aviso con «Reintentar» y las demás
   cinco secciones siguen funcionando. El botón «Reintentar» recupera la

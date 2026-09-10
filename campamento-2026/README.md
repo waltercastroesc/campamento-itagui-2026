@@ -16,6 +16,14 @@ Bloc de notas. **Guárdalos siempre en codificación UTF-8**, o los acentos se r
 | `locacion.json` | La finca, el mapa y los enlaces de navegación. |
 | `contactos.json` | El grupo de WhatsApp y los contactos de emergencia. |
 
+**Una vez configurado el panel de administración** (ver más abajo),
+`habitaciones.json`, `programacion.json` y `canciones.json` dejan de ser la
+fuente que usa el sitio publicado: el sitio pasa a leer esos tres en vivo
+desde Google Sheets. Los archivos siguen ahí como contenido de ejemplo para
+quien abra el proyecto en su computador sin haber configurado nada todavía.
+`carta.json`, `locacion.json` y `contactos.json` **siempre se editan a mano**,
+con o sin panel — cambian una sola vez al año.
+
 ## Ver el sitio en el computador
 
 El sitio usa módulos de JavaScript, que el navegador no carga al abrir el archivo
@@ -41,6 +49,25 @@ carrusel en menos de un minuto.
 
 El puente con Drive es el archivo `apps-script/Codigo.gs`, que **no se publica con el
 sitio**: se pega en script.google.com. Las instrucciones están dentro del propio archivo.
+
+## Panel de administración
+
+`admin.html` permite editar habitaciones, programación y canciones sin tocar
+archivos. Para que funcione:
+
+1. El Apps Script (`apps-script/Codigo.gs`) debe estar publicado — ver la
+   sección "Las fotos" arriba.
+2. Corre `configurarPanel()` una vez desde el editor de Apps Script para
+   crear la hoja de cálculo del panel.
+3. Corre `establecerClave()` una vez (con la contraseña real puesta en el
+   código antes de ejecutar, y borrada del código después) para fijar la
+   contraseña.
+4. Comparte el enlace a `admin.html` y la contraseña solo con la persona de
+   confianza que va a editar el contenido.
+
+La carta de bienvenida, la locación y los contactos **siguen editándose a
+mano** en sus archivos JSON — no pasaron al panel porque cambian una sola
+vez al año.
 
 ## Pruebas
 
