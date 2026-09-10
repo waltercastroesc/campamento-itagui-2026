@@ -123,3 +123,110 @@
     }
   }
 }
+
+/* ---------- Programacion ---------- */
+
+.pestanas {
+  display: flex;
+  gap: var(--esp-2);
+  justify-content: center;
+  margin-bottom: var(--esp-4);
+  flex-wrap: wrap;
+}
+
+.pestanas__boton {
+  border: 0.125rem solid var(--vino);
+  background: transparent;
+  color: var(--vino);
+  border-radius: var(--radio-pill);
+  padding: var(--esp-2) var(--esp-4);
+  font-weight: 600;
+}
+
+.pestanas__boton[aria-selected="true"] {
+  background: var(--vino);
+  color: var(--crema);
+}
+
+.dia {
+  position: relative;
+  background: var(--hueso);
+  color: var(--vino);
+  border: 0.125rem solid var(--vino);
+  border-radius: var(--radio-tarjeta);
+  padding: var(--esp-5) var(--esp-3) var(--esp-4);
+  margin-top: var(--esp-4);
+}
+
+/* El numero cuelga por encima del borde superior, como en el boceto. */
+.dia__numero {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--fuente-titulo);
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--vino);
+  background: var(--hueso);
+  padding-inline: var(--esp-3);
+}
+
+.dia__nombre {
+  font-size: var(--txt-titular);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: var(--esp-4);
+}
+
+.dia__bloques {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--esp-3);
+}
+
+.bloque {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  align-items: center;
+  gap: var(--esp-3);
+}
+
+.bloque__hora {
+  display: grid;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  background: var(--vino);
+  color: var(--crema);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.bloque__actividad {
+  font-weight: 600;
+}
+
+@media (min-width: 48rem) {
+  /* En escritorio los tres dias van lado a lado y las pestañas sobran. */
+  .pestanas {
+    display: none;
+  }
+
+  .dias {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--esp-4);
+    align-items: start;
+  }
+
+  .dia[hidden] {
+    display: block;
+  }
+}

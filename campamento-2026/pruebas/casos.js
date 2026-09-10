@@ -4,6 +4,7 @@
 
 import { igual, cierto, lanza } from "./afirmar.js";
 import { cargarJSON } from "../js/util/datos.js";
+import { validarProgramacion } from "../js/programacion.js";
 
 export const casos = [
   {
@@ -45,6 +46,39 @@ export const casos = [
         () => cargarJSON("datos/carta.json", traerFalso),
         "Un fallo de red deberia propagarse"
       );
+    },
+  },
+  {
+    nombre: "validarProgramacion acepta la forma correcta",
+    entorno: "ambos",
+    ejecutar() {
+      const datos = [{ dia: "Viernes", numero: 1, bloques: [{ hora: "5:00 PM", actividad: "Salida" }] }];
+      igual(validarProgramacion(datos), { valida: true }, "Un dia bien formado deberia pasar");
+    },
+  },
+  {
+    nombre: "validarProgramacion rechaza lo que no es una lista",
+    entorno: "ambos",
+    ejecutar() {
+      const resultado = validarProgramacion({ dia: "Viernes" });
+      cierto(resultado.valida === false, "Un objeto suelto no es una programacion valida");
+    },
+  },
+  {
+    nombre: "validarProgramacion rechaza un dia sin bloques",
+    entorno: "ambos",
+    ejecutar() {
+      const resultado = validarProgramacion([{ dia: "Viernes", numero: 1 }]);
+      cierto(resultado.valida === false, "Un dia sin bloques no es valido");
+      cierto(resultado.motivo.includes("Viernes"), "El motivo deberia nombrar el dia problematico");
+    },
+  },
+  {
+    nombre: "validarProgramacion rechaza un bloque sin hora",
+    entorno: "ambos",
+    ejecutar() {
+      const datos = [{ dia: "Sábado", numero: 2, bloques: [{ actividad: "Desayuno" }] }];
+      cierto(validarProgramacion(datos).valida === false, "Un bloque sin hora no es valido");
     },
   },
 ];

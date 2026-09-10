@@ -1,0 +1,38 @@
+[
+  {
+    "dia": "Viernes",
+    "numero": 1,
+    "bloques": [
+      { "hora": "5:00 PM", "actividad": "Salida" },
+      { "hora": "7:00 PM", "actividad": "Llegada y acomodación" },
+      { "hora": "8:00 PM", "actividad": "Cena" },
+      { "hora": "9:30 PM", "actividad": "Primer servicio" }
+    ]
+  },
+  {
+    "dia": "Sábado",
+    "numero": 2,
+    "bloques": [
+      { "hora": "6:00 AM", "actividad": "Alborada y Devocional" },
+      { "hora": "8:00 AM", "actividad": "Desayuno" },
+      { "hora": "10:00 AM", "actividad": "Segundo servicio" },
+      { "hora": "1:00 PM", "actividad": "Almuerzo" },
+      { "hora": "2:30 PM", "actividad": "Actividad campamento" },
+      { "hora": "4:30 PM", "actividad": "Refrigerio" },
+      { "hora": "5:00 PM", "actividad": "Tercer servicio" },
+      { "hora": "8:00 PM", "actividad": "Cena" },
+      { "hora": "8:00 PM", "actividad": "Noche de alabanza" }
+    ]
+  },
+  {
+    "dia": "Domingo",
+    "numero": 3,
+    "bloques": [
+      { "hora": "6:00 AM", "actividad": "Alborada y Devocional" },
+      { "hora": "8:00 AM", "actividad": "Desayuno" },
+      { "hora": "9:30 AM", "actividad": "Servicio de clausura" },
+      { "hora": "1:00 PM", "actividad": "Almuerzo y recreación" },
+      { "hora": "5:00 PM", "actividad": "Refrigerio y regreso" }
+    ]
+  }
+]
