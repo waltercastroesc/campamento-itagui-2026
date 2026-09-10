@@ -119,8 +119,8 @@ function guardarHabitaciones(cuerpo) {
         filasIntegrantes.push([id, nombre]);
       });
     });
-    escribirFilas(habitaciones, filasHabitaciones);
-    escribirFilas(integrantes, filasIntegrantes);
+    escribirFilas(habitaciones, filasHabitaciones, [2, 3]);
+    escribirFilas(integrantes, filasIntegrantes, [2]);
 
     CacheService.getScriptCache().remove('datos_habitaciones');
     return responder({ ok: true });
@@ -142,7 +142,7 @@ function guardarProgramacion(cuerpo) {
         filas.push([dia.dia, dia.numero, bloque.hora, bloque.actividad]);
       });
     });
-    escribirFilas(hoja, filas);
+    escribirFilas(hoja, filas, [1, 3, 4]);
 
     CacheService.getScriptCache().remove('datos_programacion');
     return responder({ ok: true });
@@ -168,8 +168,8 @@ function guardarCanciones(cuerpo) {
         filasBloques.push([c.id, orden + 1, b.tipo, (b.lineas || []).join('\n')]);
       });
     });
-    escribirFilas(canciones, filasCanciones);
-    escribirFilas(bloques, filasBloques);
+    escribirFilas(canciones, filasCanciones, [1, 2]);
+    escribirFilas(bloques, filasBloques, [1, 3, 4]);
 
     CacheService.getScriptCache().remove('datos_canciones');
     return responder({ ok: true });
@@ -184,9 +184,22 @@ function limpiarPestana(hoja, encabezados) {
   hoja.getRange(1, 1, 1, encabezados.length).setValues([encabezados]);
 }
 
-function escribirFilas(hoja, filas) {
+function escribirFilas(hoja, filas, columnasTexto) {
   if (filas.length === 0) return;
+  forzarColumnasComoTexto(hoja, 2, filas.length, columnasTexto);
   hoja.getRange(2, 1, filas.length, filas[0].length).setValues(filas);
+}
+
+/**
+ * Antes de escribir, fuerza a texto plano las columnas indicadas (numero de
+ * columna, 1 = A) para que Sheets no las autoconvierta en fecha/hora o numero
+ * — por ejemplo, "5:00 PM" se guardaria como una hora real, no como el texto
+ * tal cual, y se leeria despues como una fecha rara en vez de "5:00 PM".
+ */
+function forzarColumnasComoTexto(hoja, filaInicio, numFilas, columnas) {
+  (columnas || []).forEach(function (col) {
+    hoja.getRange(filaInicio, col, numFilas, 1).setNumberFormat('@');
+  });
 }
 
 /** Enruta las lecturas: fotos (por defecto) o datos del panel. */
@@ -292,11 +305,25 @@ function leerFilas(libro, nombrePestana) {
   for (var i = 1; i < valores.length; i++) {
     var fila = {};
     for (var c = 0; c < encabezados.length; c++) {
-      fila[encabezados[c]] = valores[i][c];
+      fila[encabezados[c]] = normalizarValorCelda(valores[i][c]);
     }
     filas.push(fila);
   }
   return filas;
+}
+
+/**
+ * Si una celda quedo guardada como fecha/hora en vez de texto plano (de antes
+ * de que escribirFilas/crearPestana forzaran el formato de texto), esto la
+ * devuelve a algo legible en vez del objeto de fecha crudo. Las escrituras
+ * nuevas ya no deberian producir esto; es una red de seguridad para datos
+ * que hayan quedado mal guardados antes de esa proteccion.
+ */
+function normalizarValorCelda(valor) {
+  if (Object.prototype.toString.call(valor) === '[object Date]') {
+    return Utilities.formatDate(valor, Session.getScriptTimeZone(), 'h:mm a');
+  }
+  return valor;
 }
 
 function leerHabitaciones(libro) {
@@ -355,22 +382,24 @@ function configurarPanel() {
 
   crearPestana(libro, 'Habitaciones', ['id', 'nombre', 'lider'], [
     [1, 'Habitación 1', 'PENDIENTE — nombre del líder'],
-  ]);
+  ], [2, 3]);
   crearPestana(libro, 'Integrantes', ['habitacion_id', 'nombre'], [
     [1, 'PENDIENTE — integrante 1'],
     [1, 'PENDIENTE — integrante 2'],
-  ]);
+  ], [2]);
   crearPestana(libro, 'Programacion', ['dia', 'numero', 'hora', 'actividad'], [
     ['Viernes', 1, '5:00 PM', 'Salida'],
     ['Viernes', 1, '7:00 PM', 'Llegada y acomodación'],
-  ]);
+    ['Sábado', 2, '6:00 AM', 'Alborada y Devocional'],
+    ['Domingo', 3, '9:30 AM', 'Servicio de clausura'],
+  ], [1, 3, 4]);
   crearPestana(libro, 'Canciones', ['id', 'titulo', 'numero', 'lema'], [
     ['derrama', 'Derrama', 1, true],
-  ]);
+  ], [1, 2]);
   crearPestana(libro, 'CancionesBloques', ['cancion_id', 'orden', 'tipo', 'lineas'], [
     ['derrama', 1, 'estrofa', 'Eres poderoso\nNo lo puedo explicar'],
     ['derrama', 2, 'coro', 'Soy una vasija esperando ser llena'],
-  ]);
+  ], [1, 3, 4]);
 
   // La pestaña por defecto de Sheets ("Hoja 1") no hace falta.
   var porDefecto = libro.getSheetByName('Hoja 1') || libro.getSheetByName('Sheet1');
@@ -379,10 +408,11 @@ function configurarPanel() {
   Logger.log('Hoja creada: ' + libro.getUrl());
 }
 
-function crearPestana(libro, nombre, encabezados, filasEjemplo) {
+function crearPestana(libro, nombre, encabezados, filasEjemplo, columnasTexto) {
   var hoja = libro.insertSheet(nombre);
   hoja.getRange(1, 1, 1, encabezados.length).setValues([encabezados]);
   if (filasEjemplo.length > 0) {
+    forzarColumnasComoTexto(hoja, 2, filasEjemplo.length, columnasTexto);
     hoja.getRange(2, 1, filasEjemplo.length, encabezados.length).setValues(filasEjemplo);
   }
 }

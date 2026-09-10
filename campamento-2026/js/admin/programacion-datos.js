@@ -9,3 +9,13 @@ export function agregarBloque(dia) {
 export function quitarBloque(dia, indice) {
   return { ...dia, bloques: dia.bloques.filter((_, i) => i !== indice) };
 }
+
+/** Agrega un dia vacio al final, con un bloque para empezar a escribir. No muta el arreglo recibido. */
+export function agregarDia(dias) {
+  return [...dias, { dia: "", numero: dias.length + 1, bloques: [{ hora: "", actividad: "" }] }];
+}
+
+/** Quita el dia en `indice`. No muta el arreglo recibido. */
+export function quitarDia(dias, indice) {
+  return dias.filter((_, i) => i !== indice);
+}

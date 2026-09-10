@@ -2,7 +2,7 @@
 
 import { traerDatoVivo } from "../util/datosVivos.js";
 import { llamarApi, mensajeDeErrorAdmin } from "./clave.js";
-import { agregarBloque, quitarBloque } from "./programacion-datos.js";
+import { agregarBloque, quitarBloque, agregarDia, quitarDia } from "./programacion-datos.js";
 
 export async function iniciar(contenedor, clave) {
   contenedor.innerHTML = "";
@@ -13,6 +13,11 @@ export async function iniciar(contenedor, clave) {
 
   const lista = document.createElement("div");
   lista.className = "panel-lista";
+
+  const agregarDiaBoton = document.createElement("button");
+  agregarDiaBoton.type = "button";
+  agregarDiaBoton.className = "pill";
+  agregarDiaBoton.textContent = "+ Agregar día";
 
   const guardarBoton = document.createElement("button");
   guardarBoton.type = "button";
@@ -36,9 +41,14 @@ export async function iniciar(contenedor, clave) {
     const bloqueDia = document.createElement("div");
     bloqueDia.className = "panel-tarjeta";
 
-    const nombreDia = document.createElement("h3");
-    nombreDia.textContent = dia.dia;
-    bloqueDia.append(nombreDia);
+    const campoNombreDia = document.createElement("input");
+    campoNombreDia.type = "text";
+    campoNombreDia.placeholder = "Nombre del día (ej. Sábado)";
+    campoNombreDia.value = dia.dia;
+    campoNombreDia.addEventListener("input", () => {
+      dias[indiceDia] = { ...dias[indiceDia], dia: campoNombreDia.value };
+    });
+    bloqueDia.append(campoNombreDia);
 
     const listaBloques = document.createElement("div");
 
@@ -93,9 +103,23 @@ export async function iniciar(contenedor, clave) {
       repintarBloques();
     });
 
-    bloqueDia.append(listaBloques, agregarBoton);
+    const quitarDiaBoton = document.createElement("button");
+    quitarDiaBoton.type = "button";
+    quitarDiaBoton.className = "panel-quitar-habitacion";
+    quitarDiaBoton.textContent = "Quitar este día";
+    quitarDiaBoton.addEventListener("click", () => {
+      dias = quitarDia(dias, indiceDia);
+      repintar();
+    });
+
+    bloqueDia.append(listaBloques, agregarBoton, quitarDiaBoton);
     return bloqueDia;
   }
+
+  agregarDiaBoton.addEventListener("click", () => {
+    dias = agregarDia(dias);
+    repintar();
+  });
 
   guardarBoton.addEventListener("click", async () => {
     estadoGuardado.textContent = "Guardando…";
@@ -114,5 +138,5 @@ export async function iniciar(contenedor, clave) {
   }
   repintar();
 
-  contenedor.append(lista, guardarBoton, estadoGuardado);
+  contenedor.append(lista, agregarDiaBoton, guardarBoton, estadoGuardado);
 }

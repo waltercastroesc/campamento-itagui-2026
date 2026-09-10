@@ -19,7 +19,7 @@ import {
   agregarIntegrante,
   quitarIntegrante,
 } from "../js/admin/habitaciones-datos.js";
-import { agregarBloque, quitarBloque } from "../js/admin/programacion-datos.js";
+import { agregarBloque, quitarBloque, agregarDia, quitarDia } from "../js/admin/programacion-datos.js";
 import {
   generarSlugCancion,
   agregarCancion,
@@ -527,6 +527,30 @@ export const casos = [
       };
       const resultado = quitarBloque(dia, 0);
       igual(resultado.bloques, [{ hora: "8:00 AM", actividad: "Desayuno" }], "Deberia quedar solo el segundo");
+    },
+  },
+  {
+    nombre: "agregarDia añade un dia vacio al final con un bloque para empezar",
+    entorno: "ambos",
+    ejecutar() {
+      const dias = [{ dia: "Viernes", numero: 1, bloques: [{ hora: "5:00 PM", actividad: "Salida" }] }];
+      const resultado = agregarDia(dias);
+      igual(resultado.length, 2, "Deberia haber dos dias");
+      igual(
+        resultado[1],
+        { dia: "", numero: 2, bloques: [{ hora: "", actividad: "" }] },
+        "El dia nuevo deberia traer un bloque vacio para empezar a escribir"
+      );
+      igual(dias.length, 1, "El arreglo original no deberia mutarse");
+    },
+  },
+  {
+    nombre: "quitarDia elimina por indice",
+    entorno: "ambos",
+    ejecutar() {
+      const dias = [{ dia: "Viernes" }, { dia: "Sábado" }, { dia: "Domingo" }];
+      const resultado = quitarDia(dias, 1);
+      igual(resultado.map((d) => d.dia), ["Viernes", "Domingo"], "Deberia quitar solo el del medio");
     },
   },
   {

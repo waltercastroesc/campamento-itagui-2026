@@ -12,6 +12,19 @@ body.admin {
   padding: var(--esp-4) var(--esp-3);
 }
 
+.admin-volver {
+  display: inline-block;
+  margin-bottom: var(--esp-3);
+  color: var(--vino);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.admin-volver:hover,
+.admin-volver:focus-visible {
+  text-decoration: underline;
+}
+
 .admin-titulo {
   text-align: center;
   margin-bottom: var(--esp-4);
