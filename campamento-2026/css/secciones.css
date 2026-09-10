@@ -670,7 +670,7 @@
 .carrusel__celda {
   flex: 0 0 auto;
   scroll-snap-align: start;
-  width: min(70vw, 16rem);
+  width: min(78vw, 20rem);
 }
 
 .carrusel__abrir {
