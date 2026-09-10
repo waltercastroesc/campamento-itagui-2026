@@ -753,10 +753,20 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  text-align: center;
+  line-height: 1.15;
+  padding-inline: var(--esp-1);
+  /* Una palabra sola ("HABITACIÓN") puede ser mas ancha que su celda en
+     pantallas muy angostas. Sin esto se desborda y se pega con la celda
+     vecina en vez de partirse dentro de la suya. */
+  overflow-wrap: anywhere;
 }
 
 .navegacion__lista li {
   flex: 1;
+  /* Sin esto, el minimo por defecto de un item flex se calcula por su
+     contenido y puede exceder el reparto equitativo entre los cuatro. */
+  min-width: 0;
 }
 
 /* ---------- Pie ---------- */
