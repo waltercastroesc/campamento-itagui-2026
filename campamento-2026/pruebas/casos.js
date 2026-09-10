@@ -11,6 +11,16 @@ import { filtrarCanciones, textoDeCancion } from "../js/canciones.js";
 import { calcularMedidas, comprimir, validarArchivo, LADO_MAXIMO } from "../js/imagen.js";
 import { conReintento } from "../js/util/red.js";
 import { enlaceTelefono } from "../js/pie.js";
+import { cargarConRespaldo, traerDatoVivo } from "../js/util/datosVivos.js";
+
+/** Un almacen tipo localStorage, pero en memoria, para no depender del navegador. */
+function crearAlmacenFalso() {
+  const mapa = new Map();
+  return {
+    getItem: (clave) => (mapa.has(clave) ? mapa.get(clave) : null),
+    setItem: (clave, valor) => mapa.set(clave, valor),
+  };
+}
 
 const CANCIONES_DE_PRUEBA = [
   {
@@ -294,6 +304,78 @@ export const casos = [
       igual(enlaceTelefono("+57 300 000 0000"), "tel:+573000000000", "Deberia quitar los espacios");
       igual(enlaceTelefono("(604) 123-4567"), "tel:6041234567", "Deberia quitar parentesis y guiones");
       igual(enlaceTelefono(""), "", "Sin numero no deberia haber enlace");
+    },
+  },
+  {
+    nombre: "cargarConRespaldo devuelve el dato en vivo y lo guarda",
+    entorno: "ambos",
+    async ejecutar() {
+      const almacen = crearAlmacenFalso();
+      const resultado = await cargarConRespaldo("clave-1", async () => ({ a: 1 }), almacen);
+      igual(resultado, { datos: { a: 1 }, desdeCache: false }, "Deberia devolver el dato en vivo");
+      igual(JSON.parse(almacen.getItem("clave-1")), { a: 1 }, "Deberia haber guardado una copia");
+    },
+  },
+  {
+    nombre: "cargarConRespaldo usa la copia guardada si falla el dato en vivo",
+    entorno: "ambos",
+    async ejecutar() {
+      const almacen = crearAlmacenFalso();
+      almacen.setItem("clave-2", JSON.stringify({ b: 2 }));
+      const resultado = await cargarConRespaldo(
+        "clave-2",
+        async () => { throw new Error("sin_conexion"); },
+        almacen
+      );
+      igual(resultado, { datos: { b: 2 }, desdeCache: true }, "Deberia devolver la copia guardada");
+    },
+  },
+  {
+    nombre: "cargarConRespaldo relanza el error si falla y no hay copia guardada",
+    entorno: "ambos",
+    async ejecutar() {
+      const almacen = crearAlmacenFalso();
+      const error = await lanza(
+        () => cargarConRespaldo("clave-3", async () => { throw new Error("sin_conexion"); }, almacen),
+        "Sin copia guardada deberia relanzar"
+      );
+      igual(error.message, "sin_conexion", "Deberia ser el mismo error original");
+    },
+  },
+  {
+    nombre: "cargarConRespaldo tolera un almacen que lanza al guardar o leer",
+    entorno: "ambos",
+    async ejecutar() {
+      const almacenRoto = {
+        getItem() { throw new Error("bloqueado"); },
+        setItem() { throw new Error("bloqueado"); },
+      };
+      const resultado = await cargarConRespaldo("clave-4", async () => ({ c: 3 }), almacenRoto);
+      igual(resultado, { datos: { c: 3 }, desdeCache: false }, "Un almacen roto no deberia impedir devolver el dato en vivo");
+    },
+  },
+  {
+    nombre: "traerDatoVivo devuelve datos cuando el servidor responde ok",
+    entorno: "ambos",
+    async ejecutar() {
+      const traerFalso = async (url) => {
+        igual(url, "https://ejemplo.test/exec?recurso=datos&tipo=habitaciones", "Deberia armar la URL con recurso y tipo");
+        return { ok: true, status: 200, json: async () => ({ ok: true, datos: [{ nombre: "Habitación 1" }] }) };
+      };
+      const datos = await traerDatoVivo("habitaciones", traerFalso, "https://ejemplo.test/exec");
+      igual(datos, [{ nombre: "Habitación 1" }], "Deberia devolver el arreglo de datos");
+    },
+  },
+  {
+    nombre: "traerDatoVivo lanza si el servidor responde ok:false",
+    entorno: "ambos",
+    async ejecutar() {
+      const traerFalso = async () => ({ ok: true, status: 200, json: async () => ({ ok: false, error: "fallo_servidor" }) });
+      const error = await lanza(
+        () => traerDatoVivo("canciones", traerFalso, "https://ejemplo.test/exec"),
+        "ok:false deberia lanzar"
+      );
+      igual(error.message, "fallo_servidor", "Deberia propagar el codigo de error del servidor");
     },
   },
 ];
