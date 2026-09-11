@@ -19,8 +19,8 @@ body {
   font-size: var(--txt-cuerpo);
   font-weight: 400;
   line-height: 1.6;
-  /* Deja sitio a la barra fija inferior en celular. */
-  padding-bottom: var(--alto-navegacion);
+  /* Deja sitio a la barra fija superior en celular. */
+  padding-top: var(--alto-navegacion);
 }
 
 h1,
@@ -141,12 +141,6 @@ a {
 }
 
 @media (min-width: 48rem) {
-  body {
-    /* En escritorio la barra va arriba. */
-    padding-bottom: 0;
-    padding-top: var(--alto-navegacion);
-  }
-
   .seccion {
     padding-block: var(--esp-6);
   }

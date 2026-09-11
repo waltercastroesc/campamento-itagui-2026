@@ -5,7 +5,7 @@
 import { igual, cierto, lanza } from "./afirmar.js";
 import { cargarJSON } from "../js/util/datos.js";
 import { validarProgramacion } from "../js/programacion.js";
-import { contarIntegrantes } from "../js/habitaciones.js";
+import { contarIntegrantes, buscarHabitacionPorPersona } from "../js/habitaciones.js";
 import { normalizar, aSlug } from "../js/util/texto.js";
 import { filtrarCanciones, textoDeCancion } from "../js/canciones.js";
 import { calcularMedidas, comprimir, validarArchivo, LADO_MAXIMO } from "../js/imagen.js";
@@ -145,6 +145,35 @@ export const casos = [
     entorno: "ambos",
     ejecutar() {
       igual(contarIntegrantes({ nombre: "Habitación 9" }), 0, "Sin lider ni integrantes son cero");
+    },
+  },
+  {
+    nombre: "buscarHabitacionPorPersona encuentra a un integrante sin importar acentos ni mayusculas",
+    entorno: "ambos",
+    ejecutar() {
+      const habitaciones = [
+        { nombre: "Habitación 1", lider: "Ana", integrantes: ["Luis", "Sara"] },
+        { nombre: "Habitación 2", lider: "María José", integrantes: ["Andrés"] },
+      ];
+      igual(buscarHabitacionPorPersona(habitaciones, "andres"), 1, "Deberia encontrar a Andrés sin la tilde");
+      igual(buscarHabitacionPorPersona(habitaciones, "SARA"), 0, "Deberia encontrar a Sara sin importar mayusculas");
+    },
+  },
+  {
+    nombre: "buscarHabitacionPorPersona tambien busca por el lider",
+    entorno: "ambos",
+    ejecutar() {
+      const habitaciones = [{ nombre: "Habitación 1", lider: "María José", integrantes: [] }];
+      igual(buscarHabitacionPorPersona(habitaciones, "maria"), 0, "Deberia encontrar al lider por nombre parcial");
+    },
+  },
+  {
+    nombre: "buscarHabitacionPorPersona devuelve -1 si no hay coincidencia o la busqueda esta vacia",
+    entorno: "ambos",
+    ejecutar() {
+      const habitaciones = [{ nombre: "Habitación 1", lider: "Ana", integrantes: ["Luis"] }];
+      igual(buscarHabitacionPorPersona(habitaciones, "Pedro"), -1, "Nadie se llama Pedro en esta lista");
+      igual(buscarHabitacionPorPersona(habitaciones, "   "), -1, "Una busqueda vacia no encuentra nada");
     },
   },
   {

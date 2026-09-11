@@ -216,6 +216,13 @@
   color: var(--crema);
 }
 
+/* Sin esto, el margen superior del ".dia" activo se "cuela" a traves de
+   este contenedor y se suma (colapsa) con el margen inferior de las
+   pestañas de arriba, dejando el numero grande del dia encima de ellas. */
+.dias {
+  display: flow-root;
+}
+
 .dia {
   position: relative;
   background: var(--hueso);
@@ -301,16 +308,45 @@
 
 /* ---------- Habitaciones ---------- */
 
-.habitaciones {
-  display: grid;
-  gap: var(--esp-3);
+/* Buscador de personas: campo + boton, en una sola fila si hay espacio.
+   Encadenada con ".buscador" para ganarle en especificidad a su
+   "display: block" — si no, ese "display: block" se impone por venir
+   despues en la hoja de estilos y el boton "Buscar" cae a otra fila. */
+.buscador.habitaciones__buscador {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  width: min(100%, 32rem);
+  margin: 0 auto var(--esp-3);
+}
+
+.habitaciones__buscador label {
+  flex: 1;
+  min-width: 12rem;
+}
+
+.habitaciones__resultado {
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: var(--esp-4);
+}
+
+.habitaciones__resultado--vacio {
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+/* Una sola habitacion visible a la vez, como la pagina de un libro. */
+.habitaciones__libro {
+  width: min(100%, 34rem);
+  margin: 0 auto;
 }
 
 .habitacion {
   background: var(--hueso);
   color: var(--vino);
   border-radius: var(--radio-tarjeta);
-  padding: var(--esp-3) var(--esp-4);
+  padding: var(--esp-4);
   box-shadow: var(--sombra-tarjeta);
 }
 
@@ -319,14 +355,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--esp-3);
-  cursor: pointer;
-  list-style: none;
   font-weight: 600;
-}
-
-/* Quita el triangulo por defecto de <summary> en Safari y Chrome. */
-.habitacion__cabecera::-webkit-details-marker {
-  display: none;
 }
 
 .habitacion__nombre {
@@ -356,10 +385,38 @@
   gap: var(--esp-1);
 }
 
-@media (min-width: 48rem) {
-  .habitaciones {
-    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
-  }
+/* Las flechas para "pasar la pagina" del libro de habitaciones. */
+.habitaciones__paginador {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-4);
+  margin-top: var(--esp-4);
+}
+
+.habitaciones__flecha {
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 0.125rem solid var(--crema);
+  background: transparent;
+  color: var(--crema);
+  font-size: 1.5rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+}
+
+.habitaciones__flecha:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.habitaciones__indicador {
+  font-weight: 600;
+  min-width: 11rem;
+  text-align: center;
 }
 
 /* ---------- Canciones ---------- */
@@ -396,12 +453,14 @@
   border-radius: var(--radio-tarjeta);
   padding: var(--esp-4);
   box-shadow: var(--sombra-tarjeta);
+  text-align: center;
 }
 
 .cancion__cabecera {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: var(--esp-3);
   margin-bottom: var(--esp-3);
 }
@@ -424,12 +483,10 @@
   line-height: 1.7;
 }
 
-/* El coro se distingue de las estrofas con una barra y cursiva. */
+/* El coro se distingue de las estrofas en cursiva y con mas peso. */
 .letra-bloque--coro {
   font-style: italic;
   font-weight: 500;
-  border-left: 0.1875rem solid var(--vino);
-  padding-left: var(--esp-3);
 }
 
 .cancion__cantar {
@@ -488,10 +545,7 @@
   max-width: 40rem;
   margin-inline: auto;
   line-height: 1.8;
-}
-
-.cantar__letra .letra-bloque--coro {
-  border-left-color: var(--crema);
+  text-align: center;
 }
 
 @media (min-width: 48rem) {
@@ -815,13 +869,13 @@
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  top: 0;
   z-index: 40;
   background: var(--vino);
-  border-top: 0.0625rem solid rgba(254, 249, 221, 0.25);
+  border-bottom: 0.0625rem solid rgba(254, 249, 221, 0.25);
   box-shadow: var(--sombra-flotante);
-  /* Respeta la barra de gestos de los iPhone. */
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  /* Respeta el notch / la barra de estado de los iPhone. */
+  padding-top: env(safe-area-inset-top, 0);
 }
 
 .navegacion__lista {
@@ -973,10 +1027,6 @@
 @media (min-width: 48rem) {
   .navegacion {
     position: relative;
-    top: 0;
-    bottom: auto;
-    border-top: none;
-    border-bottom: 0.0625rem solid rgba(254, 249, 221, 0.25);
   }
 
   .navegacion__lista {
