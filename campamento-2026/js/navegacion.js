@@ -5,6 +5,7 @@ const DESTINOS = [
   { id: "programacion", texto: "Programa" },
   { id: "canciones", texto: "Canciones" },
   { id: "habitaciones", texto: "Habitación" },
+  { id: "experiencias", texto: "Cuéntanos" },
   { id: "fotos", texto: "Fotos" },
 ];
 

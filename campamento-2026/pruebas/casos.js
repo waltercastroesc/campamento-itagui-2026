@@ -6,6 +6,7 @@ import { igual, cierto, lanza } from "./afirmar.js";
 import { cargarJSON } from "../js/util/datos.js";
 import { validarProgramacion } from "../js/programacion.js";
 import { contarIntegrantes, buscarHabitacionPorPersona } from "../js/habitaciones.js";
+import { validarExperiencia, MAXIMO_CARACTERES } from "../js/experiencias.js";
 import { normalizar, aSlug } from "../js/util/texto.js";
 import { filtrarCanciones, textoDeCancion } from "../js/canciones.js";
 import { calcularMedidas, comprimir, validarArchivo, LADO_MAXIMO } from "../js/imagen.js";
@@ -174,6 +175,30 @@ export const casos = [
       const habitaciones = [{ nombre: "Habitación 1", lider: "Ana", integrantes: ["Luis"] }];
       igual(buscarHabitacionPorPersona(habitaciones, "Pedro"), -1, "Nadie se llama Pedro en esta lista");
       igual(buscarHabitacionPorPersona(habitaciones, "   "), -1, "Una busqueda vacia no encuentra nada");
+    },
+  },
+  {
+    nombre: "validarExperiencia rechaza un texto vacio",
+    entorno: "ambos",
+    ejecutar() {
+      const revision = validarExperiencia("   ");
+      cierto(revision.valida === false, "Un texto solo de espacios no es valido");
+    },
+  },
+  {
+    nombre: "validarExperiencia rechaza un texto mas largo que el maximo",
+    entorno: "ambos",
+    ejecutar() {
+      const revision = validarExperiencia("a".repeat(MAXIMO_CARACTERES + 1));
+      cierto(revision.valida === false, "Un texto mas largo que el maximo no es valido");
+    },
+  },
+  {
+    nombre: "validarExperiencia acepta un texto normal",
+    entorno: "ambos",
+    ejecutar() {
+      const revision = validarExperiencia("Fue el mejor fin de semana de mi vida.");
+      cierto(revision.valida === true, "Un texto normal, dentro del limite, es valido");
     },
   },
   {

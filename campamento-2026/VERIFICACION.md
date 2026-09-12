@@ -36,6 +36,12 @@
 
 - [ ] Correr `configurarPanel()` una vez desde el editor de Apps Script
 - [ ] Correr `establecerClave()` una vez con la contraseña real
+- [ ] Pegar el `Codigo.gs` actualizado (agrega "Cuéntanos tu experiencia") y
+      publicar una **Nueva versión** de la implementación existente
+- [ ] Correr `configurarExperiencias()` una vez desde el editor, para crear
+      la pestaña "Experiencias" en la hoja que ya existe
+- [ ] Probar contar una experiencia desde el sitio público y confirmar que
+      aparece (hasta 60 segundos de espera por la caché)
 - [ ] Compartir el enlace a `admin.html` y la contraseña solo con la persona
       de confianza
 - [ ] Probar agregar una habitación, un integrante, una actividad y una

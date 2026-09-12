@@ -336,8 +336,9 @@
   opacity: 0.85;
 }
 
-/* Una sola habitacion visible a la vez, como la pagina de un libro. */
-.habitaciones__libro {
+/* Una sola tarjeta visible a la vez, como la pagina de un libro.
+   La reutiliza tambien Experiencias. */
+.libro-paginado {
   width: min(100%, 34rem);
   margin: 0 auto;
 }
@@ -385,8 +386,8 @@
   gap: var(--esp-1);
 }
 
-/* Las flechas para "pasar la pagina" del libro de habitaciones. */
-.habitaciones__paginador {
+/* Las flechas para "pasar la pagina" de un libro (habitaciones, experiencias). */
+.paginador {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -394,7 +395,7 @@
   margin-top: var(--esp-4);
 }
 
-.habitaciones__flecha {
+.paginador__flecha {
   width: 3rem;
   height: 3rem;
   flex-shrink: 0;
@@ -408,15 +409,23 @@
   place-items: center;
 }
 
-.habitaciones__flecha:disabled {
+.paginador__flecha:disabled {
   opacity: 0.35;
   cursor: default;
 }
 
-.habitaciones__indicador {
+.paginador__indicador {
   font-weight: 600;
   min-width: 11rem;
   text-align: center;
+}
+
+/* Sus "display" de arriba, si no se acotan, ganan sobre el "display: none"
+   nativo del atributo hidden (Experiencias los oculta cuando no hay nada
+   que mostrar o falla la carga; Habitaciones nunca los oculta). */
+.libro-paginado[hidden],
+.paginador[hidden] {
+  display: none;
 }
 
 /* ---------- Canciones ---------- */
@@ -659,6 +668,71 @@
     max-width: 40rem;
     margin-inline: auto;
   }
+}
+
+/* ---------- Experiencias ---------- */
+
+.experiencias__formulario {
+  display: grid;
+  gap: var(--esp-3);
+  justify-items: center;
+  width: min(100%, 32rem);
+  margin: 0 auto var(--esp-5);
+}
+
+.experiencias__campo-nombre,
+.experiencias__campo-texto {
+  display: grid;
+  gap: var(--esp-1);
+  width: 100%;
+  font-size: var(--txt-menor);
+}
+
+.experiencias__textarea {
+  font: inherit;
+  color: var(--vino);
+  background: var(--hueso);
+  border: none;
+  border-radius: var(--radio-tarjeta);
+  padding: var(--esp-3);
+  resize: vertical;
+}
+
+.experiencias__contador {
+  align-self: flex-end;
+  font-size: var(--txt-menor);
+  opacity: 0.75;
+  margin: calc(var(--esp-2) * -1) 0 0;
+}
+
+.experiencias__estado {
+  text-align: center;
+  font-weight: 600;
+}
+
+.experiencias__estado--error {
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+.experiencia {
+  background: var(--hueso);
+  color: var(--vino);
+  border-radius: var(--radio-tarjeta);
+  padding: var(--esp-4);
+  box-shadow: var(--sombra-tarjeta);
+  text-align: center;
+}
+
+.experiencia__texto {
+  font-style: italic;
+  line-height: 1.7;
+  margin-bottom: var(--esp-3);
+}
+
+.experiencia__autor {
+  font-weight: 600;
+  margin-bottom: 0;
 }
 
 /* ---------- Fotos ---------- */

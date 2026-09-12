@@ -113,20 +113,20 @@ function construirLibro(habitaciones) {
   resultado.hidden = true;
 
   const libro = document.createElement("div");
-  libro.className = "habitaciones__libro";
+  libro.className = "libro-paginado";
 
   const paginador = document.createElement("div");
-  paginador.className = "habitaciones__paginador";
+  paginador.className = "paginador";
   const anterior = document.createElement("button");
   anterior.type = "button";
-  anterior.className = "habitaciones__flecha";
+  anterior.className = "paginador__flecha";
   anterior.textContent = "‹";
   anterior.setAttribute("aria-label", "Habitación anterior");
   const indicador = document.createElement("span");
-  indicador.className = "habitaciones__indicador";
+  indicador.className = "paginador__indicador";
   const siguiente = document.createElement("button");
   siguiente.type = "button";
-  siguiente.className = "habitaciones__flecha";
+  siguiente.className = "paginador__flecha";
   siguiente.textContent = "›";
   siguiente.setAttribute("aria-label", "Habitación siguiente");
   paginador.append(anterior, indicador, siguiente);

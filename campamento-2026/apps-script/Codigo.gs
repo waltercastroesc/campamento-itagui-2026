@@ -54,6 +54,9 @@ function doPost(e) {
     if (cuerpo.accion === 'guardarCanciones') {
       return guardarCanciones(cuerpo);
     }
+    if (cuerpo.accion === 'enviarExperiencia') {
+      return enviarExperiencia(cuerpo);
+    }
     return responder({ ok: false, error: 'accion_desconocida' });
   } catch (error) {
     return responder({ ok: false, error: 'fallo_servidor' });
@@ -178,6 +181,41 @@ function guardarCanciones(cuerpo) {
   }
 }
 
+var MAXIMO_CARACTERES_EXPERIENCIA = 600;
+
+/**
+ * Guarda una experiencia contada por un asistente. A diferencia de
+ * guardarHabitaciones/guardarProgramacion/guardarCanciones, esto NO pide
+ * contraseña: cualquiera puede contar su experiencia, igual que cualquiera
+ * puede subir una foto.
+ */
+function enviarExperiencia(cuerpo) {
+  var texto = String(cuerpo.texto || '').trim();
+  if (!texto) return responder({ ok: false, error: 'texto_vacio' });
+  if (texto.length > MAXIMO_CARACTERES_EXPERIENCIA) {
+    return responder({ ok: false, error: 'demasiado_largo' });
+  }
+  var nombre = String(cuerpo.nombre || '').trim().slice(0, 40);
+
+  try {
+    var libro = obtenerHoja();
+    var hoja = libro.getSheetByName('Experiencias');
+    if (!hoja) return responder({ ok: false, error: 'fallo_servidor' });
+
+    var fila = hoja.getLastRow() + 1;
+    // La fecha se guarda como texto ISO, no como fecha real de Sheets: asi se
+    // lee de vuelta tal cual, sin el mismo problema de autoconversion que ya
+    // resolvimos para las horas de Programacion (ver forzarColumnasComoTexto).
+    forzarColumnasComoTexto(hoja, fila, 1, [1, 2, 3]);
+    hoja.getRange(fila, 1, 1, 3).setValues([[new Date().toISOString(), nombre, texto]]);
+
+    CacheService.getScriptCache().remove('datos_experiencias');
+    return responder({ ok: true });
+  } catch (error) {
+    return responder({ ok: false, error: 'fallo_servidor' });
+  }
+}
+
 /** Borra todas las filas de datos de una pestaña, dejando solo el encabezado. */
 function limpiarPestana(hoja, encabezados) {
   hoja.clear();
@@ -284,6 +322,7 @@ function leerDatos(tipo) {
     if (tipo === 'habitaciones') datos = leerHabitaciones(libro);
     else if (tipo === 'programacion') datos = leerProgramacion(libro);
     else if (tipo === 'canciones') datos = leerCanciones(libro);
+    else if (tipo === 'experiencias') datos = leerExperiencias(libro);
     else return responder({ ok: false, error: 'tipo_desconocido' });
 
     var salida = JSON.stringify({ ok: true, datos: datos });
@@ -365,6 +404,17 @@ function leerCanciones(libro) {
   });
 }
 
+/** Las mas recientes primero: las fechas ISO se comparan bien como texto. */
+function leerExperiencias(libro) {
+  var filas = leerFilas(libro, 'Experiencias');
+  filas.sort(function (a, b) {
+    return String(b.fecha).localeCompare(String(a.fecha));
+  });
+  return filas.map(function (f) {
+    return { nombre: f.nombre || '', texto: f.texto };
+  });
+}
+
 function responder(objeto) {
   return ContentService.createTextOutput(JSON.stringify(objeto))
     .setMimeType(ContentService.MimeType.JSON);
@@ -400,6 +450,7 @@ function configurarPanel() {
     ['derrama', 1, 'estrofa', 'Eres poderoso\nNo lo puedo explicar'],
     ['derrama', 2, 'coro', 'Soy una vasija esperando ser llena'],
   ], [1, 3, 4]);
+  crearPestana(libro, 'Experiencias', ['fecha', 'nombre', 'texto'], [], [1, 2, 3]);
 
   // La pestaña por defecto de Sheets ("Hoja 1") no hace falta.
   var porDefecto = libro.getSheetByName('Hoja 1') || libro.getSheetByName('Sheet1');
@@ -415,6 +466,22 @@ function crearPestana(libro, nombre, encabezados, filasEjemplo, columnasTexto) {
     forzarColumnasComoTexto(hoja, 2, filasEjemplo.length, columnasTexto);
     hoja.getRange(2, 1, filasEjemplo.length, encabezados.length).setValues(filasEjemplo);
   }
+}
+
+/**
+ * Corre esto UNA SOLA VEZ desde el editor si el panel ya estaba creado antes
+ * de que existiera la seccion "Cuéntanos tu experiencia" (configurarPanel()
+ * ya no hace falta correrlo de nuevo: crearia una hoja de calculo nueva y
+ * separada). Agrega solo la pestaña que falta; no toca las demas.
+ */
+function configurarExperiencias() {
+  var libro = obtenerHoja();
+  if (libro.getSheetByName('Experiencias')) {
+    Logger.log('La pestaña "Experiencias" ya existe. No se cambio nada.');
+    return;
+  }
+  crearPestana(libro, 'Experiencias', ['fecha', 'nombre', 'texto'], [], [1, 2, 3]);
+  Logger.log('Pestaña "Experiencias" creada.');
 }
 
 /**
