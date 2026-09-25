@@ -1005,21 +1005,27 @@
 /* ---------- Pie ---------- */
 
 .pie {
-  display: grid;
-  justify-items: center;
   text-align: center;
   padding-block: var(--esp-5);
   color: var(--vino);
 }
 
-/* Logo y WhatsApp lado a lado; en pantallas angostas, el logo ya ocupa
-   casi todo el ancho y este mismo "wrap" los apila sin que se encimen. */
+/* Logo y WhatsApp lado a lado, centrados como un solo grupo. "width:
+   fit-content" + "margin-inline: auto" los centra directamente, sin
+   depender de como el contenedor (".pie" es tambien ".contenedor", un
+   grid de una sola columna) reparta el espacio sobrante — eso fue lo que
+   los dejaba cada uno pegado a su lado en vez de juntos en el centro. En
+   pantallas angostas, el logo ya ocupa casi todo el ancho y "flex-wrap"
+   los apila sin que se encimen. */
 .pie__fila {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--esp-4);
   flex-wrap: wrap;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
 }
 
 .pie__marcas {
