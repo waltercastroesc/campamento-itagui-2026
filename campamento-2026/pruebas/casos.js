@@ -5,7 +5,7 @@
 import { igual, cierto, lanza } from "./afirmar.js";
 import { cargarJSON } from "../js/util/datos.js";
 import { validarProgramacion } from "../js/programacion.js";
-import { contarIntegrantes, buscarPersonaPorCedula } from "../js/habitaciones.js";
+import { buscarPersonaPorCedula } from "../js/habitaciones.js";
 import { validarExperiencia, MAXIMO_CARACTERES } from "../js/experiencias.js";
 import { normalizar, aSlug, normalizarCedula } from "../js/util/texto.js";
 import { filtrarCanciones, textoDeCancion } from "../js/canciones.js";
@@ -130,33 +130,6 @@ export const casos = [
     ejecutar() {
       const datos = [{ dia: "Sábado", numero: 2, bloques: [{ actividad: "Desayuno" }] }];
       cierto(validarProgramacion(datos).valida === false, "Un bloque sin hora no es valido");
-    },
-  },
-  {
-    nombre: "contarIntegrantes suma al lider y a los integrantes",
-    entorno: "ambos",
-    ejecutar() {
-      const habitacion = {
-        nombre: "Habitación 1",
-        lider: { nombre: "Ana", cedula: "1", kit: "1" },
-        integrantes: [
-          { nombre: "Luis", cedula: "2", kit: "2" },
-          { nombre: "Sara", cedula: "3", kit: "3" },
-        ],
-      };
-      igual(contarIntegrantes(habitacion), 3, "Dos integrantes mas el lider son tres personas");
-    },
-  },
-  {
-    nombre: "contarIntegrantes tolera una habitacion sin datos",
-    entorno: "ambos",
-    ejecutar() {
-      igual(contarIntegrantes({ nombre: "Habitación 9" }), 0, "Sin lider ni integrantes son cero");
-      igual(
-        contarIntegrantes({ nombre: "Habitación 9", lider: { nombre: "", cedula: "", kit: "" }, integrantes: [] }),
-        0,
-        "Un lider vacio (recien agregado en el panel) no cuenta como persona"
-      );
     },
   },
   {

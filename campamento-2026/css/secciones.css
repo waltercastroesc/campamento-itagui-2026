@@ -382,74 +382,13 @@
 }
 
 /* Una sola tarjeta visible a la vez, como la pagina de un libro.
-   La reutiliza tambien Experiencias. */
+   La usan Canciones y Experiencias. */
 .libro-paginado {
   width: min(100%, 34rem);
   margin: 0 auto;
 }
 
-.habitacion {
-  background: var(--hueso);
-  color: var(--vino);
-  border-radius: var(--radio-tarjeta);
-  padding: var(--esp-4);
-  box-shadow: var(--sombra-tarjeta);
-}
-
-.habitacion__cabecera {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--esp-3);
-  font-weight: 600;
-}
-
-.habitacion__nombre {
-  font-family: var(--fuente-titulo);
-  font-size: var(--txt-titular);
-  font-weight: 400;
-}
-
-.habitacion__cuantos {
-  font-size: var(--txt-menor);
-  opacity: 0.75;
-  white-space: nowrap;
-}
-
-.habitacion__cuerpo {
-  padding-top: var(--esp-3);
-}
-
-.habitacion__lider {
-  margin-bottom: var(--esp-2);
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--esp-2);
-}
-
-.habitacion__integrantes {
-  margin: 0;
-  padding-left: var(--esp-4);
-  display: grid;
-  gap: var(--esp-1);
-}
-
-.habitacion__integrantes li {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--esp-2);
-}
-
-.habitacion__kit {
-  font-size: var(--txt-menor);
-  font-weight: 600;
-  opacity: 0.75;
-  white-space: nowrap;
-}
-
-/* Las flechas para "pasar la pagina" de un libro (habitaciones, experiencias). */
+/* Las flechas para "pasar la pagina" de un libro (canciones, experiencias). */
 .paginador {
   display: flex;
   align-items: center;
@@ -484,8 +423,8 @@
 }
 
 /* Sus "display" de arriba, si no se acotan, ganan sobre el "display: none"
-   nativo del atributo hidden (Experiencias los oculta cuando no hay nada
-   que mostrar o falla la carga; Habitaciones nunca los oculta). */
+   nativo del atributo hidden (Canciones y Experiencias los ocultan cuando
+   no hay nada que mostrar o falla la carga). */
 .libro-paginado[hidden],
 .paginador[hidden] {
   display: none;

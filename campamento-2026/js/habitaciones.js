@@ -1,18 +1,13 @@
 // habitaciones.js — quien duerme donde.
-// Se ve una habitacion a la vez, como las paginas de un libro; el buscador
-// salta directo a la habitacion de la persona que se busque, por cedula.
+// Solo hay un buscador por cedula: al escribir la propia, se muestra una
+// tarjeta con la habitacion, el kit y el lider de esa persona. El listado
+// completo de habitaciones no se ve en la pagina principal (para eso esta
+// el panel de administracion).
 
 import { normalizarCedula } from "./util/texto.js";
 import { cargarJSON, montarSeccion } from "./util/datos.js";
 import { cargarConRespaldo, traerDatoVivo } from "./util/datosVivos.js";
 import { CONFIG } from "./config.js";
-
-/** Personas de una habitacion, contando al lider. Funcion pura. */
-export function contarIntegrantes(habitacion) {
-  const integrantes = Array.isArray(habitacion?.integrantes) ? habitacion.integrantes.length : 0;
-  const lider = habitacion?.lider?.nombre ? 1 : 0;
-  return integrantes + lider;
-}
 
 /**
  * Encuentra a la persona con esa cedula (sin importar puntos ni espacios):
@@ -91,18 +86,14 @@ function pintarHabitaciones(contenedor, { lista: habitaciones, desdeCache }) {
     return;
   }
 
-  const { formulario, resultado, libro, paginador, mostrarPagina } = construirLibro(habitaciones);
+  const { formulario, resultado } = construirBuscador(habitaciones);
 
-  envoltorio.append(formulario, resultado, libro, paginador);
+  envoltorio.append(formulario, resultado);
   contenedor.append(envoltorio);
-
-  mostrarPagina(0);
 }
 
-/** Arma el buscador, la pagina visible y el paginador. Sin tocar el DOM final: solo lo devuelve. */
-function construirLibro(habitaciones) {
-  let paginaActual = 0;
-
+/** Arma el buscador y el hueco donde va su resultado. Sin tocar el DOM final: solo lo devuelve. */
+function construirBuscador(habitaciones) {
   const formulario = document.createElement("form");
   formulario.className = "buscador habitaciones__buscador";
 
@@ -130,37 +121,6 @@ function construirLibro(habitaciones) {
   resultado.setAttribute("aria-live", "polite");
   resultado.hidden = true;
 
-  const libro = document.createElement("div");
-  libro.className = "libro-paginado";
-
-  const paginador = document.createElement("div");
-  paginador.className = "paginador";
-  const anterior = document.createElement("button");
-  anterior.type = "button";
-  anterior.className = "paginador__flecha";
-  anterior.textContent = "‹";
-  anterior.setAttribute("aria-label", "Habitación anterior");
-  const indicador = document.createElement("span");
-  indicador.className = "paginador__indicador";
-  const siguiente = document.createElement("button");
-  siguiente.type = "button";
-  siguiente.className = "paginador__flecha";
-  siguiente.textContent = "›";
-  siguiente.setAttribute("aria-label", "Habitación siguiente");
-  paginador.append(anterior, indicador, siguiente);
-
-  function mostrarPagina(indice) {
-    paginaActual = Math.min(Math.max(indice, 0), habitaciones.length - 1);
-    libro.innerHTML = "";
-    libro.append(construirHabitacion(habitaciones[paginaActual]));
-    indicador.textContent = `Habitación ${paginaActual + 1} de ${habitaciones.length}`;
-    anterior.disabled = paginaActual === 0;
-    siguiente.disabled = paginaActual === habitaciones.length - 1;
-  }
-
-  anterior.addEventListener("click", () => mostrarPagina(paginaActual - 1));
-  siguiente.addEventListener("click", () => mostrarPagina(paginaActual + 1));
-
   formulario.addEventListener("submit", (evento) => {
     evento.preventDefault();
     const hallazgo = buscarPersonaPorCedula(habitaciones, campo.value);
@@ -178,63 +138,9 @@ function construirLibro(habitaciones) {
     }
 
     resultado.append(construirTarjetaPersona(hallazgo));
-    mostrarPagina(hallazgo.habitacionIndice);
   });
 
-  return { formulario, resultado, libro, paginador, mostrarPagina };
-}
-
-function construirHabitacion(habitacion) {
-  const tarjeta = document.createElement("article");
-  tarjeta.className = "habitacion";
-
-  const cabecera = document.createElement("div");
-  cabecera.className = "habitacion__cabecera";
-
-  const nombre = document.createElement("h3");
-  nombre.className = "habitacion__nombre";
-  nombre.textContent = habitacion.nombre;
-
-  const cuantos = document.createElement("span");
-  cuantos.className = "habitacion__cuantos";
-  const total = contarIntegrantes(habitacion);
-  cuantos.textContent = total === 1 ? "1 persona" : `${total} personas`;
-
-  cabecera.append(nombre, cuantos);
-
-  const cuerpo = document.createElement("div");
-  cuerpo.className = "habitacion__cuerpo";
-
-  if (habitacion.lider?.nombre) {
-    const lider = document.createElement("p");
-    lider.className = "habitacion__lider";
-    const etiquetaLider = document.createElement("span");
-    etiquetaLider.textContent = "Líder: ";
-    const quien = document.createElement("strong");
-    quien.textContent = habitacion.lider.nombre;
-    lider.append(etiquetaLider, quien);
-    if (habitacion.lider.kit) {
-      lider.append(construirInsigniaKit(habitacion.lider.kit));
-    }
-    cuerpo.append(lider);
-  }
-
-  const lista = document.createElement("ul");
-  lista.className = "habitacion__integrantes";
-  for (const persona of habitacion.integrantes || []) {
-    const fila = document.createElement("li");
-    const nombrePersona = document.createElement("span");
-    nombrePersona.textContent = persona?.nombre ?? persona;
-    fila.append(nombrePersona);
-    if (persona?.kit) {
-      fila.append(construirInsigniaKit(persona.kit));
-    }
-    lista.append(fila);
-  }
-  cuerpo.append(lista);
-
-  tarjeta.append(cabecera, cuerpo);
-  return tarjeta;
+  return { formulario, resultado };
 }
 
 /** La tarjeta de resultado del buscador: nombre propio, habitación, kit y líder. */
@@ -267,11 +173,4 @@ function construirFilaResultado(etiquetaTexto, valorTexto, comoInsignia = false)
 
   fila.append(etiqueta, valor);
   return fila;
-}
-
-function construirInsigniaKit(kit) {
-  const insignia = document.createElement("span");
-  insignia.className = "habitacion__kit";
-  insignia.textContent = `Kit ${kit}`;
-  return insignia;
 }
