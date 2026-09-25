@@ -5,8 +5,7 @@
 - [ ] `datos/carta.json` — texto real de la carta de bienvenida
 - [ ] `datos/habitaciones.json` — habitaciones reales con sus integrantes
       (o cargarlas desde el panel de administración una vez publicado el Apps Script)
-- [ ] `datos/contactos.json` — enlace del grupo de WhatsApp
-- [ ] `datos/contactos.json` — nombres, roles y teléfonos de emergencia
+- [x] `datos/contactos.json` — enlace del grupo de WhatsApp
 - [ ] `datos/canciones.json` — canciones adicionales del libro
       (o cargarlas desde el panel de administración)
 - [x] `datos/locacion.json` — punto exacto de la finca en Google Maps y en Waze
@@ -60,7 +59,7 @@
 - [ ] Cortar la conexión a mitad de una subida y comprobar el mensaje
 - [ ] Verificar que la foto subida aparece en la carpeta de Drive
 - [ ] Borrar una foto desde Drive y confirmar que desaparece del carrusel
-- [ ] Comprobar los enlaces de WhatsApp, Maps, Waze y los `tel:`
+- [ ] Comprobar los enlaces de WhatsApp, Maps y Waze
 - [ ] Probar el modo pantalla completa de una canción con la pantalla en reposo
 
 ## Ya verificado en desarrollo
@@ -94,10 +93,11 @@
   Script esté configurado, `script.google.com`. Ninguna petición a
   `fonts.googleapis.com` ni a ningún CDN.
 - Portada, programación (pestañas en celular / columnas en escritorio),
-  habitaciones (plegadas en celular / abiertas en escritorio), buscador de
-  canciones (por título, por letra, sin acentos), modo pantalla completa de
-  canciones (A−/A+, wakeLock, Escape), locación (mapa real diferido, Maps,
-  Waze, copiar dirección), y pie con contactos de emergencia (`tel:`):
+  habitaciones (buscador por nombre, una habitación a la vez con flechas),
+  buscador de canciones (por título, por letra, sin acentos), modo
+  pantalla completa de canciones (A−/A+, wakeLock, Escape), locación (mapa
+  real diferido, Maps, Waze, copiar dirección), "Cuéntanos tu experiencia"
+  (una a la vez con flechas) y pie con el enlace al grupo de WhatsApp:
   verificados visualmente e interactivamente en navegador real.
 - Galería: aislamiento cuando la URL del Apps Script no está configurada,
   rechazo de archivos que no son imagen sin gastar red, y compresión real

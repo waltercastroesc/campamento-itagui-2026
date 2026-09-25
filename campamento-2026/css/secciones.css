@@ -1035,23 +1035,6 @@
   text-decoration: none;
 }
 
-.pie__emergencia {
-  width: min(100%, 26rem);
-}
-
-.pie__emergencia-titulo {
-  cursor: pointer;
-  list-style: none;
-}
-
-.pie__emergencia-titulo::-webkit-details-marker {
-  display: none;
-}
-
-.pie__emergencia-titulo::marker {
-  content: "";
-}
-
 .pie__enlace-fila {
   display: inline-flex;
   align-items: center;
@@ -1071,29 +1054,6 @@
   font-weight: 700;
   text-transform: uppercase;
   text-align: left;
-}
-
-.pie__contactos {
-  list-style: none;
-  margin: var(--esp-3) 0 0;
-  padding: 0;
-  display: grid;
-  gap: var(--esp-3);
-}
-
-.pie__contactos li {
-  display: grid;
-  gap: var(--esp-1);
-}
-
-.pie__contacto-quien {
-  font-size: var(--txt-menor);
-}
-
-.pie__contacto-tel {
-  font-weight: 700;
-  /* Area de toque comoda: en una emergencia nadie deberia fallar el dedo. */
-  padding: var(--esp-2) 0;
 }
 
 /* Discreto a proposito: solo quien lo busca lo encuentra facil; la
