@@ -5,7 +5,7 @@
 import { igual, cierto, lanza } from "./afirmar.js";
 import { cargarJSON } from "../js/util/datos.js";
 import { validarProgramacion } from "../js/programacion.js";
-import { contarIntegrantes, buscarHabitacionPorCedula } from "../js/habitaciones.js";
+import { contarIntegrantes, buscarPersonaPorCedula } from "../js/habitaciones.js";
 import { validarExperiencia, MAXIMO_CARACTERES } from "../js/experiencias.js";
 import { normalizar, aSlug, normalizarCedula } from "../js/util/texto.js";
 import { filtrarCanciones, textoDeCancion } from "../js/canciones.js";
@@ -160,7 +160,7 @@ export const casos = [
     },
   },
   {
-    nombre: "buscarHabitacionPorCedula encuentra a un integrante sin importar puntos ni espacios",
+    nombre: "buscarPersonaPorCedula encuentra a un integrante sin importar puntos ni espacios",
     entorno: "ambos",
     ejecutar() {
       const habitaciones = [
@@ -178,22 +178,31 @@ export const casos = [
           integrantes: [{ nombre: "Andrés", cedula: "1.000.000.005", kit: "5" }],
         },
       ];
-      igual(buscarHabitacionPorCedula(habitaciones, "1000000005"), 1, "Deberia encontrar a Andrés sin los puntos");
-      igual(buscarHabitacionPorCedula(habitaciones, "1.000.000.003"), 0, "Deberia encontrar a Sara aunque se busque con puntos");
+      const andres = buscarPersonaPorCedula(habitaciones, "1000000005");
+      igual(andres.habitacionIndice, 1, "Deberia encontrar a Andrés sin los puntos");
+      igual(andres.habitacionNombre, "Habitación 2", "Deberia traer el nombre de su habitacion");
+      igual(andres.persona.nombre, "Andrés", "Deberia traer los datos de la persona encontrada");
+      igual(andres.liderNombre, "María José", "Deberia traer el nombre del lider de esa habitacion");
+
+      const sara = buscarPersonaPorCedula(habitaciones, "1.000.000.003");
+      igual(sara.habitacionIndice, 0, "Deberia encontrar a Sara aunque se busque con puntos");
     },
   },
   {
-    nombre: "buscarHabitacionPorCedula tambien busca por la cedula del lider",
+    nombre: "buscarPersonaPorCedula tambien busca por la cedula del lider",
     entorno: "ambos",
     ejecutar() {
       const habitaciones = [
         { nombre: "Habitación 1", lider: { nombre: "María José", cedula: "1000000009", kit: "1" }, integrantes: [] },
       ];
-      igual(buscarHabitacionPorCedula(habitaciones, "1000000009"), 0, "Deberia encontrar al lider por su cedula");
+      const encontrada = buscarPersonaPorCedula(habitaciones, "1000000009");
+      igual(encontrada.habitacionIndice, 0, "Deberia encontrar al lider por su cedula");
+      igual(encontrada.persona.nombre, "María José", "La persona encontrada deberia ser el propio lider");
+      igual(encontrada.liderNombre, "María José", "El lider de su propia habitacion es ella misma");
     },
   },
   {
-    nombre: "buscarHabitacionPorCedula devuelve -1 si no hay coincidencia o la busqueda esta vacia",
+    nombre: "buscarPersonaPorCedula devuelve null si no hay coincidencia o la busqueda esta vacia",
     entorno: "ambos",
     ejecutar() {
       const habitaciones = [
@@ -203,8 +212,8 @@ export const casos = [
           integrantes: [{ nombre: "Luis", cedula: "1000000002", kit: "2" }],
         },
       ];
-      igual(buscarHabitacionPorCedula(habitaciones, "999"), -1, "Esa cedula no esta en la lista");
-      igual(buscarHabitacionPorCedula(habitaciones, "   "), -1, "Una busqueda vacia no encuentra nada");
+      igual(buscarPersonaPorCedula(habitaciones, "999"), null, "Esa cedula no esta en la lista");
+      igual(buscarPersonaPorCedula(habitaciones, "   "), null, "Una busqueda vacia no encuentra nada");
     },
   },
   {

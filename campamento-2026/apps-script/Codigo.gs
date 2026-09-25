@@ -57,6 +57,9 @@ function doPost(e) {
     if (cuerpo.accion === 'enviarExperiencia') {
       return enviarExperiencia(cuerpo);
     }
+    if (cuerpo.accion === 'eliminarExperiencia') {
+      return eliminarExperiencia(cuerpo);
+    }
     return responder({ ok: false, error: 'accion_desconocida' });
   } catch (error) {
     return responder({ ok: false, error: 'fallo_servidor' });
@@ -221,6 +224,35 @@ function enviarExperiencia(cuerpo) {
 
     CacheService.getScriptCache().remove('datos_experiencias');
     return responder({ ok: true });
+  } catch (error) {
+    return responder({ ok: false, error: 'fallo_servidor' });
+  }
+}
+
+/**
+ * Borra una experiencia desde el panel de administracion (con contraseña).
+ * Se identifica por su fecha exacta (el timestamp ISO que enviarExperiencia
+ * le puso al guardarla), que hace de identificador unico de facto.
+ */
+function eliminarExperiencia(cuerpo) {
+  if (!claveValida(cuerpo.clave)) return responder({ ok: false, error: 'clave_incorrecta' });
+  try {
+    var fecha = String((cuerpo.datos && cuerpo.datos.fecha) || '');
+    if (!fecha) return responder({ ok: false, error: 'fallo_servidor' });
+
+    var libro = obtenerHoja();
+    var hoja = libro.getSheetByName('Experiencias');
+    if (!hoja) return responder({ ok: false, error: 'fallo_servidor' });
+
+    var valores = hoja.getDataRange().getValues();
+    for (var f = 1; f < valores.length; f++) {
+      if (String(valores[f][0]) === fecha) {
+        hoja.deleteRow(f + 1);
+        CacheService.getScriptCache().remove('datos_experiencias');
+        return responder({ ok: true });
+      }
+    }
+    return responder({ ok: false, error: 'fallo_servidor' });
   } catch (error) {
     return responder({ ok: false, error: 'fallo_servidor' });
   }
@@ -425,7 +457,7 @@ function leerExperiencias(libro) {
     return String(b.fecha).localeCompare(String(a.fecha));
   });
   return filas.map(function (f) {
-    return { nombre: f.nombre || '', texto: f.texto };
+    return { fecha: f.fecha, nombre: f.nombre || '', texto: f.texto };
   });
 }
 

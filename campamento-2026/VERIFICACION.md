@@ -35,15 +35,15 @@
 
 ## Panel de administración
 
-- [ ] Correr `configurarPanel()` una vez desde el editor de Apps Script
-- [ ] Correr `establecerClave()` una vez con la contraseña real
-- [ ] Pegar el `Codigo.gs` actualizado (agrega "Cuéntanos tu experiencia") y
+- [x] Correr `configurarPanel()` una vez desde el editor de Apps Script
+- [x] Correr `establecerClave()` una vez con la contraseña real
+- [x] Pegar el `Codigo.gs` actualizado (agrega "Cuéntanos tu experiencia") y
       publicar una **Nueva versión** de la implementación existente
-- [ ] Correr `configurarExperiencias()` una vez desde el editor, para crear
+- [x] Correr `configurarExperiencias()` una vez desde el editor, para crear
       la pestaña "Experiencias" en la hoja que ya existe
-- [ ] Probar contar una experiencia desde el sitio público y confirmar que
+- [x] Probar contar una experiencia desde el sitio público y confirmar que
       aparece (hasta 60 segundos de espera por la caché)
-- [ ] Correr `importarAsistentes()` una vez desde el editor (con una cuenta
+- [x] Correr `importarAsistentes()` una vez desde el editor (con una cuenta
       que tenga acceso al Excel de inscripciones — el ID está en
       `ID_EXCEL_ASISTENTES`, arriba de esa función en `Codigo.gs`) para
       cargar las habitaciones reales. Revisar el "Registro de ejecución"
@@ -52,8 +52,14 @@
       habitación (para revisar esos casos a mano en la Google Sheet).
       Volver a correrla reemplaza por completo lo que haya en Habitaciones
       e Integrantes — sirve para cuando el Excel cambie.
-- [ ] Probar el buscador de habitaciones con una cédula real del Excel y
+      → Hecho: 201 de 208 asistentes cargados (7 marcados "NO VA"/"1 DIA"
+      en el Excel, sin habitación por diseño), sin avisos de líder faltante.
+- [x] Probar el buscador de habitaciones con una cédula real del Excel y
       confirmar que trae la habitación correcta
+- [ ] **Pendiente:** volver a pegar el `Codigo.gs` actualizado (agrega
+      `eliminarExperiencia`, para poder borrar comentarios desde el panel)
+      y publicar otra **Nueva versión** — no hace falta correr ninguna
+      función nueva del editor esta vez, solo pegar y publicar
 - [ ] Compartir el enlace a `admin.html` y la contraseña solo con la persona
       de confianza
 - [ ] Probar agregar una habitación, un integrante, una actividad y una

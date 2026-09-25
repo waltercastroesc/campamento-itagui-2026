@@ -21,10 +21,11 @@ async function iniciarPanel() {
     contenedorClave.hidden = true;
     contenedorSecciones.hidden = false;
 
-    const [habitacionesPanel, programacionPanel, cancionesPanel] = await Promise.all([
+    const [habitacionesPanel, programacionPanel, cancionesPanel, experienciasPanel] = await Promise.all([
       import("./habitaciones-panel.js"),
       import("./programacion-panel.js"),
       import("./canciones-panel.js"),
+      import("./experiencias-panel.js"),
     ]);
 
     const seccionHabitaciones = document.createElement("section");
@@ -33,12 +34,15 @@ async function iniciarPanel() {
     seccionProgramacion.className = "admin-seccion";
     const seccionCanciones = document.createElement("section");
     seccionCanciones.className = "admin-seccion";
+    const seccionExperiencias = document.createElement("section");
+    seccionExperiencias.className = "admin-seccion";
 
-    contenedorSecciones.append(seccionHabitaciones, seccionProgramacion, seccionCanciones);
+    contenedorSecciones.append(seccionHabitaciones, seccionProgramacion, seccionCanciones, seccionExperiencias);
 
     await habitacionesPanel.iniciar(seccionHabitaciones, clave);
     await programacionPanel.iniciar(seccionProgramacion, clave);
     await cancionesPanel.iniciar(seccionCanciones, clave);
+    await experienciasPanel.iniciar(seccionExperiencias, clave);
   }
 
   const formulario = document.querySelector("#admin-clave-formulario");

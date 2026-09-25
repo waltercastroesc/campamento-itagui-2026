@@ -75,23 +75,53 @@ function pintarCanciones(contenedor, { lista: canciones, desdeCache }) {
   aviso.textContent = "No encontramos ninguna canción con eso. Prueba con otra palabra.";
 
   const libro = document.createElement("div");
-  libro.className = "libro";
+  libro.className = "libro-paginado";
 
-  function repintar() {
+  const paginador = document.createElement("div");
+  paginador.className = "paginador";
+  const anterior = document.createElement("button");
+  anterior.type = "button";
+  anterior.className = "paginador__flecha";
+  anterior.textContent = "‹";
+  anterior.setAttribute("aria-label", "Canción anterior");
+  const indicador = document.createElement("span");
+  indicador.className = "paginador__indicador";
+  const siguiente = document.createElement("button");
+  siguiente.type = "button";
+  siguiente.className = "paginador__flecha";
+  siguiente.textContent = "›";
+  siguiente.setAttribute("aria-label", "Canción siguiente");
+  paginador.append(anterior, indicador, siguiente);
+
+  let encontradas = canciones;
+  let paginaActual = 0;
+
+  function mostrarPagina(indice) {
+    paginaActual = Math.min(Math.max(indice, 0), encontradas.length - 1);
     libro.innerHTML = "";
-    const encontradas = filtrarCanciones(canciones, campo.value);
-    aviso.hidden = encontradas.length > 0;
-    for (const cancion of encontradas) {
-      libro.append(construirCancion(cancion));
-    }
+    libro.append(construirCancion(encontradas[paginaActual]));
+    indicador.textContent = `Canción ${paginaActual + 1} de ${encontradas.length}`;
+    anterior.disabled = paginaActual === 0;
+    siguiente.disabled = paginaActual === encontradas.length - 1;
   }
 
+  function repintar() {
+    encontradas = filtrarCanciones(canciones, campo.value);
+    const hayResultados = encontradas.length > 0;
+    aviso.hidden = hayResultados;
+    libro.hidden = !hayResultados;
+    paginador.hidden = !hayResultados;
+    if (hayResultados) mostrarPagina(0);
+  }
+
+  anterior.addEventListener("click", () => mostrarPagina(paginaActual - 1));
+  siguiente.addEventListener("click", () => mostrarPagina(paginaActual + 1));
   campo.addEventListener("input", repintar);
   repintar();
 
   envoltorio.append(titulo);
   if (avisoCache) envoltorio.append(avisoCache);
-  envoltorio.append(etiquetaBuscador, aviso, libro);
+  envoltorio.append(etiquetaBuscador, aviso, libro, paginador);
   contenedor.append(envoltorio);
 }
 

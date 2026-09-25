@@ -15,17 +15,34 @@ export function contarIntegrantes(habitacion) {
 }
 
 /**
- * Indice de la primera habitacion donde el lider o algun integrante tiene
- * esa cedula (sin importar puntos ni espacios). -1 si la busqueda esta
- * vacia o no se encuentra a nadie. Funcion pura.
+ * Encuentra a la persona con esa cedula (sin importar puntos ni espacios):
+ * en que indice de habitaciones esta, el nombre de esa habitacion, sus
+ * propios datos (nombre, cedula, kit) y el nombre del lider de su
+ * habitacion. null si la busqueda esta vacia o no se encuentra a nadie.
+ * Funcion pura.
  */
-export function buscarHabitacionPorCedula(habitaciones, consulta) {
+export function buscarPersonaPorCedula(habitaciones, consulta) {
   const buscado = normalizarCedula(consulta);
-  if (!buscado) return -1;
-  return habitaciones.findIndex((habitacion) => {
-    const cedulas = [habitacion?.lider?.cedula, ...(habitacion?.integrantes || []).map((p) => p?.cedula)];
-    return cedulas.some((cedula) => cedula && normalizarCedula(cedula) === buscado);
-  });
+  if (!buscado) return null;
+
+  for (let indice = 0; indice < habitaciones.length; indice++) {
+    const habitacion = habitaciones[indice];
+    const lider = habitacion?.lider;
+    const liderNombre = lider?.nombre || "";
+
+    if (lider?.cedula && normalizarCedula(lider.cedula) === buscado) {
+      return { habitacionIndice: indice, habitacionNombre: habitacion.nombre, persona: lider, liderNombre };
+    }
+
+    const encontrada = (habitacion?.integrantes || []).find(
+      (persona) => persona?.cedula && normalizarCedula(persona.cedula) === buscado
+    );
+    if (encontrada) {
+      return { habitacionIndice: indice, habitacionNombre: habitacion.nombre, persona: encontrada, liderNombre };
+    }
+  }
+
+  return null;
 }
 
 export function iniciar(contenedor) {
@@ -108,7 +125,7 @@ function construirLibro(habitaciones) {
 
   formulario.append(etiqueta, botonBuscar);
 
-  const resultado = document.createElement("p");
+  const resultado = document.createElement("div");
   resultado.className = "habitaciones__resultado";
   resultado.setAttribute("aria-live", "polite");
   resultado.hidden = true;
@@ -146,18 +163,22 @@ function construirLibro(habitaciones) {
 
   formulario.addEventListener("submit", (evento) => {
     evento.preventDefault();
-    const indice = buscarHabitacionPorCedula(habitaciones, campo.value);
+    const hallazgo = buscarPersonaPorCedula(habitaciones, campo.value);
+    resultado.innerHTML = "";
     resultado.hidden = false;
-    if (indice === -1) {
-      resultado.classList.add("habitaciones__resultado--vacio");
-      resultado.textContent = campo.value.trim()
+
+    if (!hallazgo) {
+      const mensaje = document.createElement("p");
+      mensaje.className = "habitaciones__mensaje habitaciones__mensaje--vacio";
+      mensaje.textContent = campo.value.trim()
         ? "No encontramos a nadie con esa cédula. Revisa que esté bien escrita."
         : "Escribe tu número de cédula para buscar.";
+      resultado.append(mensaje);
       return;
     }
-    resultado.classList.remove("habitaciones__resultado--vacio");
-    resultado.textContent = `Está en la ${habitaciones[indice].nombre}.`;
-    mostrarPagina(indice);
+
+    resultado.append(construirTarjetaPersona(hallazgo));
+    mostrarPagina(hallazgo.habitacionIndice);
   });
 
   return { formulario, resultado, libro, paginador, mostrarPagina };
@@ -214,6 +235,38 @@ function construirHabitacion(habitacion) {
 
   tarjeta.append(cabecera, cuerpo);
   return tarjeta;
+}
+
+/** La tarjeta de resultado del buscador: nombre propio, habitación, kit y líder. */
+function construirTarjetaPersona({ habitacionNombre, persona, liderNombre }) {
+  const tarjeta = document.createElement("div");
+  tarjeta.className = "resultado-persona";
+
+  const nombre = document.createElement("h3");
+  nombre.className = "resultado-persona__nombre";
+  nombre.textContent = persona.nombre;
+  tarjeta.append(nombre);
+
+  tarjeta.append(construirFilaResultado("Habitación:", habitacionNombre, true));
+  if (persona.kit) tarjeta.append(construirFilaResultado("Kit asignado:", persona.kit));
+  if (liderNombre) tarjeta.append(construirFilaResultado("Nombre del líder:", liderNombre));
+
+  return tarjeta;
+}
+
+function construirFilaResultado(etiquetaTexto, valorTexto, comoInsignia = false) {
+  const fila = document.createElement("div");
+  fila.className = "resultado-persona__fila";
+
+  const etiqueta = document.createElement("span");
+  etiqueta.textContent = etiquetaTexto;
+
+  const valor = document.createElement("span");
+  valor.className = comoInsignia ? "pill resultado-persona__insignia" : "resultado-persona__valor";
+  valor.textContent = valorTexto;
+
+  fila.append(etiqueta, valor);
+  return fila;
 }
 
 function construirInsigniaKit(kit) {
