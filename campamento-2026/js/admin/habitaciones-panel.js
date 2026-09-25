@@ -37,6 +37,49 @@ export async function iniciar(contenedor, clave) {
     });
   }
 
+  /** Fila con nombre + cedula + kit, para el lider o para un integrante. */
+  function construirFilaPersona(persona, alCambiar, alQuitar) {
+    const fila = document.createElement("div");
+    fila.className = "panel-fila";
+
+    const campoNombre = document.createElement("input");
+    campoNombre.type = "text";
+    campoNombre.className = "panel-fila__nombre";
+    campoNombre.placeholder = "Nombre";
+    campoNombre.value = persona.nombre;
+    campoNombre.addEventListener("input", () => alCambiar({ ...persona, nombre: campoNombre.value }));
+
+    const campoCedula = document.createElement("input");
+    campoCedula.type = "text";
+    campoCedula.inputMode = "numeric";
+    campoCedula.className = "panel-fila__cedula";
+    campoCedula.placeholder = "Cédula";
+    campoCedula.value = persona.cedula || "";
+    campoCedula.addEventListener("input", () => alCambiar({ ...persona, cedula: campoCedula.value }));
+
+    const campoKit = document.createElement("input");
+    campoKit.type = "text";
+    campoKit.inputMode = "numeric";
+    campoKit.className = "panel-fila__kit";
+    campoKit.placeholder = "Kit";
+    campoKit.value = persona.kit || "";
+    campoKit.addEventListener("input", () => alCambiar({ ...persona, kit: campoKit.value }));
+
+    fila.append(campoNombre, campoCedula, campoKit);
+
+    if (alQuitar) {
+      const quitar = document.createElement("button");
+      quitar.type = "button";
+      quitar.className = "panel-quitar";
+      quitar.textContent = "×";
+      quitar.setAttribute("aria-label", `Quitar a ${persona.nombre || "este integrante"}`);
+      quitar.addEventListener("click", alQuitar);
+      fila.append(quitar);
+    }
+
+    return fila;
+  }
+
   function construirTarjeta(habitacion, indice) {
     const tarjeta = document.createElement("div");
     tarjeta.className = "panel-tarjeta";
@@ -49,44 +92,36 @@ export async function iniciar(contenedor, clave) {
       habitaciones[indice] = { ...habitaciones[indice], nombre: campoNombre.value };
     });
 
-    const campoLider = document.createElement("input");
-    campoLider.type = "text";
-    campoLider.placeholder = "Líder";
-    campoLider.value = habitacion.lider;
-    campoLider.addEventListener("input", () => {
-      habitaciones[indice] = { ...habitaciones[indice], lider: campoLider.value };
+    const etiquetaLider = document.createElement("p");
+    etiquetaLider.className = "panel-etiqueta";
+    etiquetaLider.textContent = "Líder de la habitación";
+
+    const filaLider = construirFilaPersona(habitacion.lider || { nombre: "", cedula: "", kit: "" }, (nuevoLider) => {
+      habitaciones[indice] = { ...habitaciones[indice], lider: nuevoLider };
     });
+
+    const etiquetaIntegrantes = document.createElement("p");
+    etiquetaIntegrantes.className = "panel-etiqueta";
+    etiquetaIntegrantes.textContent = "Integrantes";
 
     const listaIntegrantes = document.createElement("div");
     listaIntegrantes.className = "panel-integrantes";
 
     function repintarIntegrantes() {
       listaIntegrantes.innerHTML = "";
-      habitaciones[indice].integrantes.forEach((nombre, indiceIntegrante) => {
-        const fila = document.createElement("div");
-        fila.className = "panel-fila";
-
-        const campo = document.createElement("input");
-        campo.type = "text";
-        campo.placeholder = "Nombre del integrante";
-        campo.value = nombre;
-        campo.addEventListener("input", () => {
-          const integrantes = [...habitaciones[indice].integrantes];
-          integrantes[indiceIntegrante] = campo.value;
-          habitaciones[indice] = { ...habitaciones[indice], integrantes };
-        });
-
-        const quitar = document.createElement("button");
-        quitar.type = "button";
-        quitar.className = "panel-quitar";
-        quitar.textContent = "×";
-        quitar.setAttribute("aria-label", `Quitar a ${nombre || "este integrante"}`);
-        quitar.addEventListener("click", () => {
-          habitaciones[indice] = quitarIntegrante(habitaciones[indice], indiceIntegrante);
-          repintarIntegrantes();
-        });
-
-        fila.append(campo, quitar);
+      habitaciones[indice].integrantes.forEach((persona, indiceIntegrante) => {
+        const fila = construirFilaPersona(
+          persona,
+          (nuevaPersona) => {
+            const integrantes = [...habitaciones[indice].integrantes];
+            integrantes[indiceIntegrante] = nuevaPersona;
+            habitaciones[indice] = { ...habitaciones[indice], integrantes };
+          },
+          () => {
+            habitaciones[indice] = quitarIntegrante(habitaciones[indice], indiceIntegrante);
+            repintarIntegrantes();
+          }
+        );
         listaIntegrantes.append(fila);
       });
     }
@@ -110,7 +145,15 @@ export async function iniciar(contenedor, clave) {
       repintar();
     });
 
-    tarjeta.append(campoNombre, campoLider, listaIntegrantes, agregarIntegranteBoton, quitarHabitacionBoton);
+    tarjeta.append(
+      campoNombre,
+      etiquetaLider,
+      filaLider,
+      etiquetaIntegrantes,
+      listaIntegrantes,
+      agregarIntegranteBoton,
+      quitarHabitacionBoton
+    );
     return tarjeta;
   }
 

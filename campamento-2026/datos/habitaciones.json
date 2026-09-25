@@ -1,29 +1,29 @@
 [
   {
     "nombre": "Habitación 1",
-    "lider": "PENDIENTE — nombre del líder",
+    "lider": { "nombre": "PENDIENTE — nombre del líder", "cedula": "", "kit": "" },
     "integrantes": [
-      "PENDIENTE — integrante 1",
-      "PENDIENTE — integrante 2",
-      "PENDIENTE — integrante 3"
+      { "nombre": "PENDIENTE — integrante 1", "cedula": "", "kit": "" },
+      { "nombre": "PENDIENTE — integrante 2", "cedula": "", "kit": "" },
+      { "nombre": "PENDIENTE — integrante 3", "cedula": "", "kit": "" }
     ]
   },
   {
     "nombre": "Habitación 2",
-    "lider": "PENDIENTE — nombre del líder",
+    "lider": { "nombre": "PENDIENTE — nombre del líder", "cedula": "", "kit": "" },
     "integrantes": [
-      "PENDIENTE — integrante 1",
-      "PENDIENTE — integrante 2"
+      { "nombre": "PENDIENTE — integrante 1", "cedula": "", "kit": "" },
+      { "nombre": "PENDIENTE — integrante 2", "cedula": "", "kit": "" }
     ]
   },
   {
     "nombre": "Habitación 3",
-    "lider": "PENDIENTE — nombre del líder",
+    "lider": { "nombre": "PENDIENTE — nombre del líder", "cedula": "", "kit": "" },
     "integrantes": [
-      "PENDIENTE — integrante 1",
-      "PENDIENTE — integrante 2",
-      "PENDIENTE — integrante 3",
-      "PENDIENTE — integrante 4"
+      { "nombre": "PENDIENTE — integrante 1", "cedula": "", "kit": "" },
+      { "nombre": "PENDIENTE — integrante 2", "cedula": "", "kit": "" },
+      { "nombre": "PENDIENTE — integrante 3", "cedula": "", "kit": "" },
+      { "nombre": "PENDIENTE — integrante 4", "cedula": "", "kit": "" }
     ]
   }
 ]

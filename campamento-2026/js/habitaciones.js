@@ -1,8 +1,8 @@
 // habitaciones.js — quien duerme donde.
 // Se ve una habitacion a la vez, como las paginas de un libro; el buscador
-// salta directo a la habitacion de la persona que se busque.
+// salta directo a la habitacion de la persona que se busque, por cedula.
 
-import { normalizar } from "./util/texto.js";
+import { normalizarCedula } from "./util/texto.js";
 import { cargarJSON, montarSeccion } from "./util/datos.js";
 import { cargarConRespaldo, traerDatoVivo } from "./util/datosVivos.js";
 import { CONFIG } from "./config.js";
@@ -10,21 +10,21 @@ import { CONFIG } from "./config.js";
 /** Personas de una habitacion, contando al lider. Funcion pura. */
 export function contarIntegrantes(habitacion) {
   const integrantes = Array.isArray(habitacion?.integrantes) ? habitacion.integrantes.length : 0;
-  const lider = habitacion?.lider ? 1 : 0;
+  const lider = habitacion?.lider?.nombre ? 1 : 0;
   return integrantes + lider;
 }
 
 /**
- * Indice de la primera habitacion donde el lider o algun integrante
- * coincide con la busqueda, sin importar mayusculas ni acentos.
- * -1 si la busqueda esta vacia o no se encuentra a nadie. Funcion pura.
+ * Indice de la primera habitacion donde el lider o algun integrante tiene
+ * esa cedula (sin importar puntos ni espacios). -1 si la busqueda esta
+ * vacia o no se encuentra a nadie. Funcion pura.
  */
-export function buscarHabitacionPorPersona(habitaciones, consulta) {
-  const buscado = normalizar(consulta);
+export function buscarHabitacionPorCedula(habitaciones, consulta) {
+  const buscado = normalizarCedula(consulta);
   if (!buscado) return -1;
   return habitaciones.findIndex((habitacion) => {
-    const nombres = [habitacion?.lider, ...(habitacion?.integrantes || [])];
-    return nombres.some((nombre) => nombre && normalizar(nombre).includes(buscado));
+    const cedulas = [habitacion?.lider?.cedula, ...(habitacion?.integrantes || []).map((p) => p?.cedula)];
+    return cedulas.some((cedula) => cedula && normalizarCedula(cedula) === buscado);
   });
 }
 
@@ -92,11 +92,12 @@ function construirLibro(habitaciones) {
   const etiqueta = document.createElement("label");
   const textoEtiqueta = document.createElement("span");
   textoEtiqueta.className = "solo-lectores";
-  textoEtiqueta.textContent = "Busca tu nombre para saber en qué habitación estás";
+  textoEtiqueta.textContent = "Busca tu número de cédula para saber en qué habitación estás";
   const campo = document.createElement("input");
   campo.type = "search";
+  campo.inputMode = "numeric";
   campo.className = "buscador__campo";
-  campo.placeholder = "Escribe tu nombre…";
+  campo.placeholder = "Escribe tu número de cédula…";
   campo.autocomplete = "off";
   etiqueta.append(textoEtiqueta, campo);
 
@@ -145,13 +146,13 @@ function construirLibro(habitaciones) {
 
   formulario.addEventListener("submit", (evento) => {
     evento.preventDefault();
-    const indice = buscarHabitacionPorPersona(habitaciones, campo.value);
+    const indice = buscarHabitacionPorCedula(habitaciones, campo.value);
     resultado.hidden = false;
     if (indice === -1) {
       resultado.classList.add("habitaciones__resultado--vacio");
       resultado.textContent = campo.value.trim()
-        ? "No encontramos a nadie con ese nombre. Revisa cómo lo escribiste."
-        : "Escribe un nombre para buscar.";
+        ? "No encontramos a nadie con esa cédula. Revisa que esté bien escrita."
+        : "Escribe tu número de cédula para buscar.";
       return;
     }
     resultado.classList.remove("habitaciones__resultado--vacio");
@@ -183,14 +184,17 @@ function construirHabitacion(habitacion) {
   const cuerpo = document.createElement("div");
   cuerpo.className = "habitacion__cuerpo";
 
-  if (habitacion.lider) {
+  if (habitacion.lider?.nombre) {
     const lider = document.createElement("p");
     lider.className = "habitacion__lider";
     const etiquetaLider = document.createElement("span");
     etiquetaLider.textContent = "Líder: ";
     const quien = document.createElement("strong");
-    quien.textContent = habitacion.lider;
+    quien.textContent = habitacion.lider.nombre;
     lider.append(etiquetaLider, quien);
+    if (habitacion.lider.kit) {
+      lider.append(construirInsigniaKit(habitacion.lider.kit));
+    }
     cuerpo.append(lider);
   }
 
@@ -198,11 +202,23 @@ function construirHabitacion(habitacion) {
   lista.className = "habitacion__integrantes";
   for (const persona of habitacion.integrantes || []) {
     const fila = document.createElement("li");
-    fila.textContent = persona;
+    const nombrePersona = document.createElement("span");
+    nombrePersona.textContent = persona?.nombre ?? persona;
+    fila.append(nombrePersona);
+    if (persona?.kit) {
+      fila.append(construirInsigniaKit(persona.kit));
+    }
     lista.append(fila);
   }
   cuerpo.append(lista);
 
   tarjeta.append(cabecera, cuerpo);
   return tarjeta;
+}
+
+function construirInsigniaKit(kit) {
+  const insignia = document.createElement("span");
+  insignia.className = "habitacion__kit";
+  insignia.textContent = `Kit ${kit}`;
+  return insignia;
 }

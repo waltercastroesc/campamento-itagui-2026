@@ -377,6 +377,10 @@
 
 .habitacion__lider {
   margin-bottom: var(--esp-2);
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
 }
 
 .habitacion__integrantes {
@@ -384,6 +388,20 @@
   padding-left: var(--esp-4);
   display: grid;
   gap: var(--esp-1);
+}
+
+.habitacion__integrantes li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--esp-2);
+}
+
+.habitacion__kit {
+  font-size: var(--txt-menor);
+  font-weight: 600;
+  opacity: 0.75;
+  white-space: nowrap;
 }
 
 /* Las flechas para "pasar la pagina" de un libro (habitaciones, experiencias). */

@@ -5,9 +5,9 @@
 import { igual, cierto, lanza } from "./afirmar.js";
 import { cargarJSON } from "../js/util/datos.js";
 import { validarProgramacion } from "../js/programacion.js";
-import { contarIntegrantes, buscarHabitacionPorPersona } from "../js/habitaciones.js";
+import { contarIntegrantes, buscarHabitacionPorCedula } from "../js/habitaciones.js";
 import { validarExperiencia, MAXIMO_CARACTERES } from "../js/experiencias.js";
-import { normalizar, aSlug } from "../js/util/texto.js";
+import { normalizar, aSlug, normalizarCedula } from "../js/util/texto.js";
 import { filtrarCanciones, textoDeCancion } from "../js/canciones.js";
 import { calcularMedidas, comprimir, validarArchivo, LADO_MAXIMO } from "../js/imagen.js";
 import { conReintento } from "../js/util/red.js";
@@ -136,7 +136,14 @@ export const casos = [
     nombre: "contarIntegrantes suma al lider y a los integrantes",
     entorno: "ambos",
     ejecutar() {
-      const habitacion = { nombre: "Habitación 1", lider: "Ana", integrantes: ["Luis", "Sara"] };
+      const habitacion = {
+        nombre: "Habitación 1",
+        lider: { nombre: "Ana", cedula: "1", kit: "1" },
+        integrantes: [
+          { nombre: "Luis", cedula: "2", kit: "2" },
+          { nombre: "Sara", cedula: "3", kit: "3" },
+        ],
+      };
       igual(contarIntegrantes(habitacion), 3, "Dos integrantes mas el lider son tres personas");
     },
   },
@@ -145,35 +152,68 @@ export const casos = [
     entorno: "ambos",
     ejecutar() {
       igual(contarIntegrantes({ nombre: "Habitación 9" }), 0, "Sin lider ni integrantes son cero");
+      igual(
+        contarIntegrantes({ nombre: "Habitación 9", lider: { nombre: "", cedula: "", kit: "" }, integrantes: [] }),
+        0,
+        "Un lider vacio (recien agregado en el panel) no cuenta como persona"
+      );
     },
   },
   {
-    nombre: "buscarHabitacionPorPersona encuentra a un integrante sin importar acentos ni mayusculas",
+    nombre: "buscarHabitacionPorCedula encuentra a un integrante sin importar puntos ni espacios",
     entorno: "ambos",
     ejecutar() {
       const habitaciones = [
-        { nombre: "Habitación 1", lider: "Ana", integrantes: ["Luis", "Sara"] },
-        { nombre: "Habitación 2", lider: "María José", integrantes: ["Andrés"] },
+        {
+          nombre: "Habitación 1",
+          lider: { nombre: "Ana", cedula: "1000000001", kit: "1" },
+          integrantes: [
+            { nombre: "Luis", cedula: "1000000002", kit: "2" },
+            { nombre: "Sara", cedula: "1000000003", kit: "3" },
+          ],
+        },
+        {
+          nombre: "Habitación 2",
+          lider: { nombre: "María José", cedula: "1000000004", kit: "4" },
+          integrantes: [{ nombre: "Andrés", cedula: "1.000.000.005", kit: "5" }],
+        },
       ];
-      igual(buscarHabitacionPorPersona(habitaciones, "andres"), 1, "Deberia encontrar a Andrés sin la tilde");
-      igual(buscarHabitacionPorPersona(habitaciones, "SARA"), 0, "Deberia encontrar a Sara sin importar mayusculas");
+      igual(buscarHabitacionPorCedula(habitaciones, "1000000005"), 1, "Deberia encontrar a Andrés sin los puntos");
+      igual(buscarHabitacionPorCedula(habitaciones, "1.000.000.003"), 0, "Deberia encontrar a Sara aunque se busque con puntos");
     },
   },
   {
-    nombre: "buscarHabitacionPorPersona tambien busca por el lider",
+    nombre: "buscarHabitacionPorCedula tambien busca por la cedula del lider",
     entorno: "ambos",
     ejecutar() {
-      const habitaciones = [{ nombre: "Habitación 1", lider: "María José", integrantes: [] }];
-      igual(buscarHabitacionPorPersona(habitaciones, "maria"), 0, "Deberia encontrar al lider por nombre parcial");
+      const habitaciones = [
+        { nombre: "Habitación 1", lider: { nombre: "María José", cedula: "1000000009", kit: "1" }, integrantes: [] },
+      ];
+      igual(buscarHabitacionPorCedula(habitaciones, "1000000009"), 0, "Deberia encontrar al lider por su cedula");
     },
   },
   {
-    nombre: "buscarHabitacionPorPersona devuelve -1 si no hay coincidencia o la busqueda esta vacia",
+    nombre: "buscarHabitacionPorCedula devuelve -1 si no hay coincidencia o la busqueda esta vacia",
     entorno: "ambos",
     ejecutar() {
-      const habitaciones = [{ nombre: "Habitación 1", lider: "Ana", integrantes: ["Luis"] }];
-      igual(buscarHabitacionPorPersona(habitaciones, "Pedro"), -1, "Nadie se llama Pedro en esta lista");
-      igual(buscarHabitacionPorPersona(habitaciones, "   "), -1, "Una busqueda vacia no encuentra nada");
+      const habitaciones = [
+        {
+          nombre: "Habitación 1",
+          lider: { nombre: "Ana", cedula: "1000000001", kit: "1" },
+          integrantes: [{ nombre: "Luis", cedula: "1000000002", kit: "2" }],
+        },
+      ];
+      igual(buscarHabitacionPorCedula(habitaciones, "999"), -1, "Esa cedula no esta en la lista");
+      igual(buscarHabitacionPorCedula(habitaciones, "   "), -1, "Una busqueda vacia no encuentra nada");
+    },
+  },
+  {
+    nombre: "normalizarCedula deja solo los digitos",
+    entorno: "ambos",
+    ejecutar() {
+      igual(normalizarCedula("1.042.265.174"), "1042265174", "Deberia quitar los puntos");
+      igual(normalizarCedula("  1042 265 174  "), "1042265174", "Deberia quitar los espacios");
+      igual(normalizarCedula(""), "", "Vacio sigue vacio");
     },
   },
   {
@@ -511,9 +551,14 @@ export const casos = [
     nombre: "agregarHabitacion añade una habitacion vacia al final",
     entorno: "ambos",
     ejecutar() {
-      const resultado = agregarHabitacion([{ nombre: "Habitación 1", lider: "", integrantes: [] }]);
+      const original = { nombre: "Habitación 1", lider: { nombre: "", cedula: "", kit: "" }, integrantes: [] };
+      const resultado = agregarHabitacion([original]);
       igual(resultado.length, 2, "Deberia haber dos habitaciones");
-      igual(resultado[1], { nombre: "", lider: "", integrantes: [] }, "La nueva deberia estar vacia");
+      igual(
+        resultado[1],
+        { nombre: "", lider: { nombre: "", cedula: "", kit: "" }, integrantes: [] },
+        "La nueva deberia estar vacia, con el lider como objeto vacio"
+      );
       igual(resultado[0].nombre, "Habitación 1", "La primera no deberia cambiar");
     },
   },
@@ -528,22 +573,39 @@ export const casos = [
     },
   },
   {
-    nombre: "agregarIntegrante añade un nombre vacio a una habitacion",
+    nombre: "agregarIntegrante añade una persona vacia a una habitacion",
     entorno: "ambos",
     ejecutar() {
-      const habitacion = { nombre: "H1", lider: "", integrantes: ["Ana"] };
+      const ana = { nombre: "Ana", cedula: "1", kit: "1" };
+      const habitacion = { nombre: "H1", lider: { nombre: "", cedula: "", kit: "" }, integrantes: [ana] };
       const resultado = agregarIntegrante(habitacion);
-      igual(resultado.integrantes, ["Ana", ""], "Deberia agregar una entrada vacia al final");
-      igual(habitacion.integrantes, ["Ana"], "La habitacion original no deberia mutarse");
+      igual(
+        resultado.integrantes,
+        [ana, { nombre: "", cedula: "", kit: "" }],
+        "Deberia agregar una persona vacia al final"
+      );
+      igual(habitacion.integrantes, [ana], "La habitacion original no deberia mutarse");
     },
   },
   {
     nombre: "quitarIntegrante elimina por indice",
     entorno: "ambos",
     ejecutar() {
-      const habitacion = { nombre: "H1", lider: "", integrantes: ["Ana", "Luis", "Sara"] };
+      const habitacion = {
+        nombre: "H1",
+        lider: { nombre: "", cedula: "", kit: "" },
+        integrantes: [
+          { nombre: "Ana", cedula: "1", kit: "1" },
+          { nombre: "Luis", cedula: "2", kit: "2" },
+          { nombre: "Sara", cedula: "3", kit: "3" },
+        ],
+      };
       const resultado = quitarIntegrante(habitacion, 0);
-      igual(resultado.integrantes, ["Luis", "Sara"], "Deberia quitar el primero");
+      igual(
+        resultado.integrantes.map((p) => p.nombre),
+        ["Luis", "Sara"],
+        "Deberia quitar el primero"
+      );
     },
   },
   {

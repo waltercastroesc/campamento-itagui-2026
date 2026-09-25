@@ -19,3 +19,11 @@ export function aSlug(texto) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
+
+/**
+ * Solo los digitos de una cedula, para poder comparar sin importar puntos,
+ * espacios o guiones ("1.042.265.174" y "1042265174" son la misma).
+ */
+export function normalizarCedula(texto) {
+  return String(texto ?? "").replace(/\D+/g, "");
+}

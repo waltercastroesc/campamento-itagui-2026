@@ -84,6 +84,29 @@ body.admin {
   border-radius: 0.5rem;
 }
 
+/* Nombre, cedula y kit no necesitan el mismo ancho: el nombre es lo mas
+   largo, cedula y kit son numeros cortos. */
+.panel-fila__nombre {
+  flex-grow: 2;
+  min-width: 10rem;
+}
+
+.panel-fila__cedula {
+  flex-grow: 1;
+  min-width: 7rem;
+}
+
+.panel-fila__kit {
+  flex: 0 1 5rem;
+  min-width: 4rem;
+}
+
+.panel-etiqueta {
+  font-weight: 600;
+  font-size: var(--txt-menor);
+  margin: var(--esp-1) 0 0;
+}
+
 .panel-tarjeta > input {
   font: inherit;
   padding: var(--esp-2);

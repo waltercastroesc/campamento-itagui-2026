@@ -3,8 +3,10 @@
 ## Contenido que falta poner
 
 - [ ] `datos/carta.json` — texto real de la carta de bienvenida
-- [ ] `datos/habitaciones.json` — habitaciones reales con sus integrantes
-      (o cargarlas desde el panel de administración una vez publicado el Apps Script)
+- [x] Habitaciones reales con sus integrantes, cédula y kit — se cargan
+      corriendo `importarAsistentes()` desde el Apps Script (ver más abajo),
+      no editando `datos/habitaciones.json` (ese archivo solo es un
+      respaldo de ejemplo para cuando el Apps Script no está configurado)
 - [x] `datos/contactos.json` — enlace del grupo de WhatsApp
 - [ ] `datos/canciones.json` — canciones adicionales del libro
       (o cargarlas desde el panel de administración)
@@ -41,6 +43,17 @@
       la pestaña "Experiencias" en la hoja que ya existe
 - [ ] Probar contar una experiencia desde el sitio público y confirmar que
       aparece (hasta 60 segundos de espera por la caché)
+- [ ] Correr `importarAsistentes()` una vez desde el editor (con una cuenta
+      que tenga acceso al Excel de inscripciones — el ID está en
+      `ID_EXCEL_ASISTENTES`, arriba de esa función en `Codigo.gs`) para
+      cargar las habitaciones reales. Revisar el "Registro de ejecución"
+      del editor: dice cuántas habitaciones y personas quedaron, y avisa si
+      no encontró a algún líder entre los integrantes de su propia
+      habitación (para revisar esos casos a mano en la Google Sheet).
+      Volver a correrla reemplaza por completo lo que haya en Habitaciones
+      e Integrantes — sirve para cuando el Excel cambie.
+- [ ] Probar el buscador de habitaciones con una cédula real del Excel y
+      confirmar que trae la habitación correcta
 - [ ] Compartir el enlace a `admin.html` y la contraseña solo con la persona
       de confianza
 - [ ] Probar agregar una habitación, un integrante, una actividad y una
@@ -93,7 +106,7 @@
   Script esté configurado, `script.google.com`. Ninguna petición a
   `fonts.googleapis.com` ni a ningún CDN.
 - Portada, programación (pestañas en celular / columnas en escritorio),
-  habitaciones (buscador por nombre, una habitación a la vez con flechas),
+  habitaciones (buscador por cédula, una habitación a la vez con flechas),
   buscador de canciones (por título, por letra, sin acentos), modo
   pantalla completa de canciones (A−/A+, wakeLock, Escape), locación (mapa
   real diferido, Maps, Waze, copiar dirección), "Cuéntanos tu experiencia"
