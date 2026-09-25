@@ -1008,9 +1008,18 @@
   display: grid;
   justify-items: center;
   text-align: center;
-  gap: var(--esp-4);
   padding-block: var(--esp-5);
   color: var(--vino);
+}
+
+/* Logo y WhatsApp lado a lado; en pantallas angostas, el logo ya ocupa
+   casi todo el ancho y este mismo "wrap" los apila sin que se encimen. */
+.pie__fila {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-4);
+  flex-wrap: wrap;
 }
 
 .pie__marcas {
@@ -1020,14 +1029,13 @@
 }
 
 .pie__logo-marcas {
-  max-width: min(100%, 24rem);
+  max-width: min(100%, 20rem);
   height: auto;
 }
 
 .pie__enlaces {
-  display: grid;
-  gap: var(--esp-3);
-  justify-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .pie__whatsapp {
